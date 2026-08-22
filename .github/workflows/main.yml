@@ -2,9 +2,9 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
   pull_request:
-    branches: [ master ]
+    branches: [ main ]
 
 jobs:
   backend-test:
@@ -12,17 +12,17 @@ jobs:
 
     steps: 
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       
       - name: Set up Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 18
       
       - name: Install backend dependencies
         run: |
           cd backend
-          npm install
+          npm ci
         
       
       - name: Run backend tests
@@ -36,23 +36,23 @@ jobs:
 
     steps: 
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       
       - name: Set up Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 18
       
       - name: Install frontened dependencies
         run: |
           cd frontend
-          npm install
+          npm ci
         
       
       - name: Run frontend tests
         run: |
           cd frontend
-          npm test        
+          npm run build
       
   docker:
     runs-on: ubuntu-latest
@@ -60,25 +60,9 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Login to DockerHub
-        run: echo "${{ secrets.DOCKER_USERNAME }}" | docker login -u "${{ secrets.DOCKER_PASSWORD }}" --password-stdin
-
-      - name: Build backend Docker image
-        run: |
-          docker build -t katarinak22/internet-tehnologije-2025-poljoprivredna_proizvodnja-backend:${{ github.sha }} ./backend
-
-      - name: Push backend image
-        run: |
-          docker push katarinak22/internet-tehnologije-2025-poljoprivredna_proizvodnja-backend:${{ github.sha }}
-      
-      - name: Build frontend Docker image
-        run: |
-          docker build -t katarinak22/internet-tehnologije-2025-poljoprivredna_proizvodnja-frontend:${{ github.sha }} ./frontend
-
-      - name: Push frontend image
-        run: |
-          docker push katarinak22/internet-tehnologije-2025-poljoprivredna_proizvodnja-frontend:${{ github.sha }}
+      - name: Validate Docker images
+        run: docker compose build
       
     

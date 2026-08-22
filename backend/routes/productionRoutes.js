@@ -98,5 +98,6 @@ router.post('/', authMiddleware, productionController.create);
  *         description: Produkcija uspešno ažurirana
  */
 router.put('/:id', authMiddleware, productionController.update);
+router.delete('/:id', authMiddleware, productionController.remove);
 
 module.exports = router;

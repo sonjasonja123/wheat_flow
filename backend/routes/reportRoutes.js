@@ -2,6 +2,7 @@ const express = require('express');
 const { query, validationResult } = require('express-validator');
 const { getReport } = require('../controllers/reportController');
 const authMiddleware = require('../middleware/auth');
+const allowRoles = require('../middleware/role');
 
 const router = express.Router();
 
@@ -15,6 +16,6 @@ const validateReportQuery = [
   }
 ];
 
-router.get('/', authMiddleware, validateReportQuery, getReport);
+router.get('/', authMiddleware, allowRoles(1, 2, 3, 4), validateReportQuery, getReport);
 
 module.exports = router;

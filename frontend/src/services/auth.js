@@ -2,7 +2,14 @@ import { jwtDecode } from 'jwt-decode'; // ispravan import
 
 export const saveAuth = (data) => {
   localStorage.setItem('token', data.token);
-  localStorage.setItem('user', JSON.stringify(data.user));
+  if (data.user) localStorage.setItem('user', JSON.stringify(data.user));
+  window.dispatchEvent(new Event('auth-changed'));
+};
+
+export const logout = () => {
+  localStorage.removeItem('token');
+  localStorage.removeItem('user');
+  window.dispatchEvent(new Event('auth-changed'));
 };
 
 export const getUserFromToken = () => {
@@ -23,3 +30,5 @@ export const getRole = () => {
   const user = getUserFromToken();
   return user?.roleId;
 };
+
+export const isAuthenticated = () => Boolean(getUserFromToken());

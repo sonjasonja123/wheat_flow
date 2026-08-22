@@ -34,7 +34,7 @@ export default function Fields() {
 
   const user = getUserFromToken();
   const roleId = getRole();
-  const canEdit = [1, 4].includes(Number(roleId));
+  const canEdit = [1, 2, 4].includes(Number(roleId));
 
   // Učitavanje parcela
   const loadFields = async () => {

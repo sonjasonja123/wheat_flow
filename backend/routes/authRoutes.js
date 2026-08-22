@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const authController = require('../controllers/authController');
+const auth = require('../middleware/auth');
+const allowRoles = require('../middleware/role');
 
 /**
  * @swagger
@@ -75,7 +77,7 @@ const authController = require('../controllers/authController');
  *         description: Pogrešni kredencijali
  */
 
-router.post('/register', authController.register);
+router.post('/register', auth, allowRoles(1, 4), authController.register);
 router.post('/login', authController.login);
 
 module.exports = router;

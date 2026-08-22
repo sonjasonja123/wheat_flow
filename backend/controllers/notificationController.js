@@ -4,7 +4,11 @@ const { Op } = require('sequelize');
 // 1. Dohvati sve notifikacije
 exports.getAllNotifications = async (req, res) => {
   try {
+    const where = [1, 4].includes(Number(req.user.roleId))
+      ? {}
+      : { [Op.or]: [{ userId: req.user.id }, { userId: null }] };
     const notifications = await Notification.findAll({
+      where,
       order: [['date', 'ASC'], ['createdAt', 'DESC']]
     });
     res.json(notifications);
@@ -17,10 +21,13 @@ exports.getAllNotifications = async (req, res) => {
 // 2. Označi notifikaciju kao pročitanu
 exports.markAsRead = async (req, res) => {
   try {
-    await Notification.update(
-      { isRead: true },
-      { where: { id: req.params.id } }
-    );
+    const notification = await Notification.findByPk(req.params.id);
+    if (!notification) return res.status(404).json({ message: 'Obaveštenje nije pronađeno.' });
+    const canChange = [1, 4].includes(Number(req.user.roleId))
+      || notification.userId === null
+      || Number(notification.userId) === Number(req.user.id);
+    if (!canChange) return res.status(403).json({ message: 'Nemate dozvolu za ovo obaveštenje.' });
+    await notification.update({ isRead: true });
     res.json({ message: 'Marked as read' });
   } catch (err) {
     console.error(err);
@@ -94,6 +101,9 @@ exports.generateNotifications = async (req, res) => {
 // 4. Obrisati sve notifikacije (opciono)
 exports.deleteAllNotifications = async (req, res) => {
   try {
+    if (![1, 4].includes(Number(req.user.roleId))) {
+      return res.status(403).json({ message: 'Samo administrator ili vlasnik mogu obrisati sva obaveštenja.' });
+    }
     await Notification.destroy({ where: {} });
     res.json({ message: 'All notifications deleted' });
   } catch (err) {

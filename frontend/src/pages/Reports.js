@@ -5,7 +5,7 @@ import Input from '../components/Input';
 import Button from '../components/Button';
 import ReportCharts from '../components/ReportCharts';
 
-const emptyReport = { productions: [], expenses: [], totals: {} };
+const emptyReport = { productions: [], expenses: [], totals: {}, seasonComparison: [] };
 
 export default function Reports() {
   const [year, setYear] = useState('2026');
@@ -36,6 +36,26 @@ export default function Reports() {
 
   const formatNumber = value => new Intl.NumberFormat('sr-RS').format(Number(value || 0));
 
+  const exportExcel = () => {
+    const rows = [
+      ['Parcela', 'Datum setve', 'Prinos kg', 'Cena RSD/kg', 'Prihod RSD'],
+      ...report.productions.map(item => [
+        item.Field?.name || `#${item.fieldId}`,
+        item.sowingDate ? String(item.sowingDate).slice(0, 10) : '',
+        Number(item.yieldKg || 0),
+        Number(item.salePricePerKg || 0),
+        Number(item.yieldKg || 0) * Number(item.salePricePerKg || 0)
+      ])
+    ];
+    const html = `<table>${rows.map(row => `<tr>${row.map(cell => `<td>${cell}</td>`).join('')}</tr>`).join('')}</table>`;
+    const url = URL.createObjectURL(new Blob([html], { type: 'application/vnd.ms-excel' }));
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `agropanel-izvestaj-${year || 'sve-sezone'}.xls`;
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div className="p-6 reports-page">
       <div className="page-heading"><span className="section-label">Analitika gazdinstva</span><h2>Izveštaji</h2><p>Pregledajte rezultate proizvodnje pšenice i strukturu troškova.</p></div>
@@ -52,6 +72,8 @@ export default function Reports() {
           </div>
         </div>
         <Button onClick={() => loadReport()}>Primeni filter</Button>
+        <Button onClick={exportExcel} style={{ marginLeft: 10 }}>Izvezi Excel</Button>
+        <Button onClick={() => window.print()} style={{ marginLeft: 10 }}>Sačuvaj kao PDF</Button>
       </Card>
 
       {message && <div className={`form-message ${message.type}`}>{message.text}</div>}
@@ -61,6 +83,8 @@ export default function Reports() {
             <article><span>Ukupno seme</span><strong>{formatNumber(report.totals?.totalSeed)} kg</strong></article>
             <article><span>Ukupan prinos</span><strong>{formatNumber(report.totals?.totalYield)} kg</strong></article>
             <article><span>Ukupni troškovi</span><strong>{formatNumber(report.totals?.totalExpenses)} RSD</strong></article>
+            <article><span>Prihod</span><strong>{formatNumber(report.totals?.totalRevenue)} RSD</strong></article>
+            <article><span>Dobit / gubitak</span><strong>{formatNumber(report.totals?.profitability)} RSD</strong></article>
           </div>
           <ReportCharts report={report} />
         </>

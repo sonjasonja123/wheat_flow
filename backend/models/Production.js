@@ -45,6 +45,11 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: true,
       field: 'protectionType'
     },
+    protectionDate: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      field: 'protectionDate'
+    },
     irrigationSystem: { 
       type: DataTypes.STRING, 
       allowNull: true,
@@ -64,6 +69,12 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.FLOAT, 
       allowNull: true,
       field: 'yieldKg'
+    },
+    salePricePerKg: {
+      type: DataTypes.FLOAT,
+      allowNull: true,
+      field: 'salePricePerKg',
+      validate: { min: 0 }
     }
   }, {
     tableName: 'productions', // ime tabele u bazi

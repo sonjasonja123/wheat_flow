@@ -3,9 +3,8 @@ const { Expense } = require('../models');
 // GET all expenses
 exports.getAll = async (req, res) => {
   try {
-    // AGRONOM ne sme da vidi
-    if (req.user.roleId === 3) {
-      return res.json({ message: 'Nemate pristup ovom delu', data: [] });
+    if (![1, 2, 4].includes(req.user.roleId)) {
+      return res.status(403).json({ message: 'Nemate pristup troškovima.' });
     }
 
     const expenses = await Expense.findAll({ raw: true });
@@ -20,7 +19,7 @@ exports.getAll = async (req, res) => {
 exports.create = async (req, res) => {
   try {
     // Ko može da kreira trošak: RADNIK, MANAGER, ADMIN, OWNER
-    if (![5, 2, 1, 4].includes(req.user.roleId)) {
+    if (![2, 1, 4].includes(req.user.roleId)) {
       return res.status(403).json({ message: 'Niste ovlašćeni da dodate trošak' });
     }
 

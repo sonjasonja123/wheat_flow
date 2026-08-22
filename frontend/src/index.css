@@ -110,6 +110,20 @@ a { color: inherit; }
 .navbar-menu a:hover, .navbar-menu a.active { color: white; background: rgba(255, 255, 255, .09); }
 .navbar-menu .navbar-login { margin-left: 6px; color: var(--forest-dark); background: var(--lime); }
 .navbar-menu .navbar-login:hover, .navbar-menu .navbar-login.active { color: var(--forest-dark); background: #d8e995; }
+.navbar-button { border: 0; font: inherit; cursor: pointer; padding: 10px 14px; border-radius: 12px; font-weight: 800; }
+.navbar-role { color: rgba(255, 255, 255, .72); font-size: .82rem; padding: 0 8px; white-space: nowrap; }
+.access-denied { max-width: 720px; margin: 70px auto; padding: 32px; border: 1px solid #eed2c8; border-radius: 22px; background: #fff7f3; text-align: center; box-shadow: var(--shadow); }
+.access-denied h2 { color: #9d2f26; margin-top: 0; }
+.input-group textarea { width: 100%; resize: vertical; border: 1px solid var(--line); border-radius: 14px; padding: 13px 15px; font: inherit; background: #fff; }
+.activity-list { display: grid; gap: 16px; }
+.activity-completed { opacity: .72; border-left: 5px solid var(--lime); }
+.activity-completed h3 { text-decoration: line-through; }
+.weather-strip { max-width: 1180px; margin: -34px auto 28px; position: relative; z-index: 2; display: grid; grid-template-columns: 1.4fr repeat(4, 1fr); gap: 1px; overflow: hidden; border-radius: 18px; background: #dfe7df; box-shadow: var(--shadow); }
+.weather-strip div { background: #fffef9; padding: 18px; display: grid; gap: 5px; }
+.weather-strip span { color: var(--muted); font-size: .78rem; }
+.weather-strip strong { color: var(--forest-dark); }
+@media (max-width: 800px) { .weather-strip { margin: 14px; grid-template-columns: 1fr 1fr; } }
+@media print { .navbar, .report-filter, button { display: none !important; } .app-main { padding-top: 0; } }
 
 .burger {
   width: 44px;
@@ -320,6 +334,7 @@ canvas { max-height: 430px; }
   .navbar-menu.open { max-height: 600px; padding: 12px 10px 16px; }
   .navbar-menu a { padding: 11px 13px; }
   .navbar-menu .navbar-login { margin: 4px 0 0; text-align: center; }
+  .navbar-role { padding: 10px 13px 2px; }
 }
 
 @media (max-width: 700px) {

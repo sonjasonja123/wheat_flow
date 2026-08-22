@@ -2,6 +2,10 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import Dashboard from './pages/Dashboard';
 
+jest.mock('./services/api', () => ({
+  api: { get: jest.fn(() => Promise.resolve({ data: [] })) }
+}));
+
 describe('AgroPanel početna strana', () => {
   test('prikazuje temu proizvodnje pšenice', () => {
     render(<Dashboard />);

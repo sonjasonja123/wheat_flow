@@ -1,4 +1,4 @@
-const { Production } = require('../models');
+const { Production, Notification, User } = require('../models');
 
 const validateDates = ({ sowingDate, fertilizationDate, harvestDate }) => {
   if (fertilizationDate && !sowingDate) return 'Pre datuma đubrenja morate uneti datum setve.';
@@ -26,13 +26,18 @@ exports.getAll = async (req, res) => {
 exports.create = async (req, res) => {
   try {
     // req.user.id dolazi iz JWT middleware-a
-    if ([3, 5].includes(req.user.roleId)) {
-      return res.status(403).json({ message: 'You are not allowed to create a production' });
-    }
-
     const dateError = validateDates(req.body);
     if (dateError) return res.status(400).json({ message: dateError });
     const production = await Production.create(req.body);
+    if (Number(req.user.roleId) === 5) {
+      const recipients = await User.findAll({ where: { roleId: [1, 2, 4] }, attributes: ['id'] });
+      await Notification.bulkCreate(recipients.map(recipient => ({
+        title: 'Radnik je uneo proizvodne podatke',
+        message: `Kreirana je proizvodnja #${production.id} za parcelu #${production.fieldId}.`,
+        date: new Date().toISOString().slice(0, 10),
+        userId: recipient.id
+      })));
+    }
     res.json(production);
   } catch (err) {
     console.error(err);
@@ -44,10 +49,6 @@ exports.create = async (req, res) => {
 exports.update = async (req, res) => {
   try {
     // Provera da li je korisnik zabranjen
-    if ([3, 5].includes(req.user.roleId)) {
-      return res.status(403).json({ message: 'You are not allowed to update a production' });
-    }
-
     const production = await Production.findByPk(req.params.id);
     if (!production) return res.status(404).json({ message: 'Production not found' });
 
@@ -59,5 +60,19 @@ exports.update = async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: err.message });
+  }
+};
+
+exports.remove = async (req, res) => {
+  try {
+    if (![1, 2, 4].includes(req.user.roleId)) {
+      return res.status(403).json({ message: 'Samo administrator, menadžer i vlasnik mogu da brišu proizvodnju.' });
+    }
+    const production = await Production.findByPk(req.params.id);
+    if (!production) return res.status(404).json({ message: 'Proizvodnja nije pronađena.' });
+    await production.destroy();
+    return res.json({ message: 'Proizvodnja je obrisana.' });
+  } catch (err) {
+    return res.status(500).json({ message: err.message });
   }
 };

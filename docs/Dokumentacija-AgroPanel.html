@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+<meta charset="utf-8">
+<title>AgroPanel — dokumentacija</title>
+<style>
+@page { size: A4; margin: 2.2cm; }
+body { font-family: "Arial", sans-serif; color: #17251f; line-height: 1.5; font-size: 11pt; }
+h1 { color: #173f32; font-size: 24pt; page-break-before: always; }
+h1:first-of-type { page-break-before: auto; }
+h2 { color: #2f684e; font-size: 17pt; margin-top: 24pt; }
+h3 { color: #3f7d5e; font-size: 13pt; }
+table { border-collapse: collapse; width: 100%; margin: 12pt 0; }
+th, td { border: 1px solid #9daf9f; padding: 6pt; vertical-align: top; }
+th { background: #e8efdd; }
+.cover { text-align: center; padding-top: 90pt; page-break-after: always; }
+.cover h1 { font-size: 28pt; }
+.subtitle { font-size: 16pt; color: #3f7d5e; }
+.placeholder { border: 2px dashed #8ca174; background: #f6f8ee; padding: 28pt; margin: 16pt 0; text-align: center; color: #50604c; page-break-inside: avoid; }
+.code { font-family: Consolas, monospace; background: #f3f5f1; padding: 8pt; white-space: pre-wrap; }
+.note { background: #fff8de; border-left: 4px solid #d2a447; padding: 8pt; }
+ul, ol { margin-top: 4pt; }
+.toc p { margin: 5pt 0; }
+</style>
+</head>
+<body>
+<section class="cover">
+  <p>Univerzitet u Beogradu<br>Fakultet organizacionih nauka<br>Katedra za elektronsko poslovanje</p>
+  <h1>AgroPanel</h1>
+  <p class="subtitle">Veb aplikacija za upravljanje proizvodnjom pšenice</p>
+  <br><br>
+  <table>
+    <tr><th>Student</th><th>Broj indeksa</th></tr>
+    <tr><td>IME I PREZIME — DOPUNITI</td><td>BROJ INDEKSA — DOPUNITI</td></tr>
+  </table>
+  <p>Mentor: Petar Lukovac</p>
+  <p>GitHub: https://github.com/sonjasonja123/iteh_agro_panel</p>
+  <p>Beograd, 2026.</p>
+</section>
+
+<section class="toc">
+<h1>Sadržaj</h1>
+<p>1. Korisnički zahtev</p>
+<p>1.1. Verbalni opis teme</p>
+<p>1.2. Funkcionalni i nefunkcionalni zahtevi</p>
+<p>1.3. Korisničke uloge i dozvole</p>
+<p>2. Opis sistema i slučajevi korišćenja</p>
+<p>3. Arhitektura i model podataka</p>
+<p>4. Tehnologije i integracije</p>
+<p>5. Implementacija korisničkog interfejsa</p>
+<p>6. API i bezbednost</p>
+<p>7. Docker, CI/CD, backup i cloud</p>
+<p>8. Testiranje i vizuelizacija</p>
+<p>9. Pokretanje projekta</p>
+<p>10. Zaključak</p>
+</section>
+
+<h1>1. Korisnički zahtev</h1>
+<h2>1.1. Verbalni opis teme</h2>
+<p>AgroPanel je veb aplikacija namenjena malim i srednjim poljoprivrednim gazdinstvima koja se bave proizvodnjom pšenice. Sistem predstavlja digitalni dnevnik gazdinstva: čuva podatke o parcelama, prati proizvodnju od setve do žetve, evidentira troškove, planira radne aktivnosti, obaveštava zaposlene i prikazuje analitičke izveštaje.</p>
+<p>Ciljni korisnici su vlasnici gazdinstava, menadžeri proizvodnje, agronomi, radnici i administratori. Interfejs je prilagođen i korisnicima bez naprednog tehničkog znanja, sa jasnim formularima, padajućim listama, porukama o uspehu ili grešci i responzivnom navigacijom.</p>
+
+<h2>1.2. Funkcionalni zahtevi</h2>
+<table>
+<tr><th>Oblast</th><th>Realizovane funkcionalnosti</th></tr>
+<tr><td>Parcele</td><td>Kreiranje, pregled, izmena i brisanje; naziv, površina, tip zemljišta, lokacija, sezona i geografske koordinate. Koordinate se mogu izabrati klikom na Google mapu. Početna sezona je 2026.</td></tr>
+<tr><td>Proizvodnja pšenice</td><td>Parcela se bira iz liste. Evidentiraju se datum i količina setve, sorta, đubrivo, datum i količina đubrenja, zaštita i njen datum, sistem navodnjavanja, voda, žetva, prinos i prodajna cena. Za sortu, đubrivo, zaštitu i navodnjavanje može se izabrati postojeća ili uneti nova vrednost.</td></tr>
+<tr><td>Validacija datuma</td><td>Obavezan poslovni redosled je setva → đubrenje → žetva. Provera postoji na frontendu i backendu.</td></tr>
+<tr><td>Troškovi</td><td>Unos vrste, opisa, iznosa i datuma; povezivanje sa parcelom i proizvodnjom preko padajućih lista; pregled po parceli i sezoni.</td></tr>
+<tr><td>Aktivnosti</td><td>Kalendar planiranih radova, tip aktivnosti, parcela, dodeljeni zaposleni, status završenosti i beleške.</td></tr>
+<tr><td>Obaveštenja</td><td>Podsetnici izvedeni iz proizvodnih datuma i automatsko obaveštenje radniku kada mu se dodeli aktivnost.</td></tr>
+<tr><td>Ugovori</td><td>Vlasnik ili administrator vodi početak, završetak, zaradu, status i napomenu ugovora zaposlenog.</td></tr>
+<tr><td>Izveštaji</td><td>Prinos po proizvodnji i parceli, struktura troškova, prihod, dobit/gubitak i poređenje sezona. Izvoz u Excel format i štampa/čuvanje u PDF.</td></tr>
+<tr><td>Vreme</td><td>Početna strana prikazuje aktuelnu temperaturu, vlažnost, padavine i vetar za prvu parcelu sa koordinatama.</td></tr>
+<tr><td>Korisnici</td><td>Administrator i vlasnik dodaju korisnike i dodeljuju uloge u granicama svojih dozvola.</td></tr>
+</table>
+
+<h2>1.3. Nefunkcionalni zahtevi</h2>
+<ul>
+<li><b>Bezbednost:</b> JWT autentifikacija, bcrypt heširanje lozinki, kontrola pristupa na API-ju i frontendu, Helmet zaglavlja, ograničenje pokušaja prijave i izdvajanje tajni u .env.</li>
+<li><b>Performanse:</b> optimizovan React build i REST odgovori; k6 scenario proverava postepeno opterećenje do 500 virtuelnih korisnika.</li>
+<li><b>Upotrebljivost:</b> responzivan dizajn, jasne oznake polja, izbori iz lista i konkretne poruke validacije.</li>
+<li><b>Portabilnost:</b> Docker slike i konfiguracija preko promenljivih okruženja omogućavaju pokretanje na različitim cloud platformama.</li>
+<li><b>Pouzdanost:</b> health endpoint proverava dostupnost baze; priložena je skripta za rezervnu kopiju i postupak dnevnog zakazivanja.</li>
+<li><b>Kompatibilnost:</b> interfejs podržava aktuelne verzije Chrome, Firefox, Edge i Safari pregledača.</li>
+</ul>
+<p class="note">Dostupnost od 99%, HTTPS sertifikat i stvarno dnevno izvršavanje backupa zavise od produkcione cloud infrastrukture. Projekat obezbeđuje potrebne konfiguracione osnove, ali se ove vrednosti potvrđuju tek nakon postavljanja i monitoringa.</p>
+
+<h2>1.4. Uloge i dozvole</h2>
+<table>
+<tr><th>Uloga</th><th>Dozvole</th></tr>
+<tr><td>Administrator</td><td>Pun pristup svim modulima, korisnicima, ugovorima i izveštajima.</td></tr>
+<tr><td>Menadžer</td><td>Upravljanje parcelama, proizvodnjom, troškovima i aktivnostima; pregled izveštaja.</td></tr>
+<tr><td>Agronom</td><td>Pregled parcela, unos i izmena proizvodnih podataka i stručnih aktivnosti; pregled izveštaja; bez brisanja proizvodnje.</td></tr>
+<tr><td>Vlasnik</td><td>Upravljanje svim podacima gazdinstva, korisnicima i ugovorima.</td></tr>
+<tr><td>Radnik</td><td>Pregled parcela, unos operativnih proizvodnih podataka, pregled i završavanje sopstvenih zadataka; nema troškove, izveštaje ni ugovore.</td></tr>
+</table>
+
+<h1>2. Opis sistema i slučajevi korišćenja</h1>
+<h2>2.1. Glavni tok rada</h2>
+<ol>
+<li>Korisnik se prijavljuje email adresom i lozinkom.</li>
+<li>Sistem proverava nalog, vraća JWT i prikazuje navigaciju prilagođenu ulozi.</li>
+<li>Ovlašćeni korisnik dodaje parcelu i bira njenu tačku na mapi.</li>
+<li>Za parcelu se otvara proizvodnja pšenice i upisuju agrotehnički podaci.</li>
+<li>Troškovi se povezuju sa parcelom i konkretnom proizvodnjom.</li>
+<li>Menadžer ili agronom planira aktivnost i dodeljuje je radniku.</li>
+<li>Radnik dobija obaveštenje, izvršava zadatak i označava ga završenim.</li>
+<li>Vlasnik pregleda prinos, prihod, troškove, profitabilnost i poređenje sezona.</li>
+</ol>
+
+<h2>2.2. SK1 — Kreiranje parcele</h2>
+<p><b>Akteri:</b> administrator, menadžer ili vlasnik. <b>Preduslov:</b> korisnik je prijavljen. <b>Postuslov:</b> parcela je trajno sačuvana.</p>
+<ol><li>Korisnik otvara modul Parcele.</li><li>Unosi naziv, pozitivnu površinu, tip zemljišta, lokaciju i sezonu.</li><li>Tačku bira na mapi ili upisuje validnu geografsku širinu i dužinu.</li><li>Sistem validira podatke i šalje zahtev API-ju.</li><li>Nakon uspeha prikazuje se poruka da je parcela sačuvana.</li></ol>
+<p><b>Alternativni tok:</b> uz neispravnu površinu, sezonu ili koordinate, korisnik dobija preciznu poruku uz problematičan podatak; zahtev se ne čuva.</p>
+
+<h2>2.3. SK2 — Evidentiranje proizvodnje</h2>
+<p><b>Akteri:</b> sve operativne uloge. Korisnik bira parcelu, popunjava podatke o pšenici i čuva proizvodnju. Sistem odbija nelogičan redosled datuma. Nakon uspešnog unosa prikazuje potvrdu i osvežava listu.</p>
+
+<h2>2.4. SK3 — Planiranje zadatka</h2>
+<p><b>Akteri:</b> administrator, menadžer, agronom i vlasnik. Kreira se aktivnost sa datumom, parcelom, beleškom i zaduženim korisnikom. Sistem pravi lično obaveštenje. Radnik vidi samo svoje zadatke i može da menja njihov status i belešku.</p>
+
+<h2>2.5. SK4 — Analiza profitabilnosti</h2>
+<p><b>Akteri:</b> administrator, menadžer, agronom i vlasnik. Korisnik bira godinu i parcelu. Sistem sabira prinos, prihod (prinos × cena), troškove i računa dobit ili gubitak. Rezultat se prikazuje karticama i grafikonima, a može se izvesti.</p>
+
+<div class="placeholder">SLIKA ZA NAKNADNO DODAVANJE 1<br>Dijagram slučajeva korišćenja sa svim ulogama</div>
+<div class="placeholder">SLIKA ZA NAKNADNO DODAVANJE 2<br>Dijagram sekvence: prijava korisnika</div>
+<div class="placeholder">SLIKA ZA NAKNADNO DODAVANJE 3<br>Dijagram sekvence: čuvanje proizvodnje</div>
+
+<h1>3. Arhitektura i model podataka</h1>
+<h2>3.1. Arhitektura</h2>
+<p>Sistem koristi troslojnu klijent–server arhitekturu. React aplikacija predstavlja prezentacioni sloj. Express REST API sadrži rute, autentifikaciju, validaciju i poslovna pravila. Sequelize ORM povezuje poslovni sloj sa MySQL bazom.</p>
+<p class="code">React klijent → Axios/REST/JSON → Express rute i middleware → kontroleri → Sequelize → MySQL</p>
+<p>Spoljne integracije su Google Maps za izbor koordinata i Open-Meteo za trenutne vremenske podatke. Chart.js radi lokalno nad podacima dobijenim iz AgroPanel API-ja.</p>
+
+<h2>3.2. Model podataka</h2>
+<table>
+<tr><th>Entitet</th><th>Najvažniji atributi i veze</th></tr>
+<tr><td>Role</td><td>id, name; jedna uloga ima više korisnika.</td></tr>
+<tr><td>User</td><td>name, email, password hash, roleId; povezan sa aktivnostima, obaveštenjima i ugovorima.</td></tr>
+<tr><td>Field</td><td>name, area, soilType, location, season, lat, lng; ima proizvodnje i aktivnosti.</td></tr>
+<tr><td>Production</td><td>fieldId, datumi, seme, sorta, đubrivo, zaštita, navodnjavanje, prinos, salePricePerKg.</td></tr>
+<tr><td>Expense</td><td>fieldId, productionId, type, description, amount, date.</td></tr>
+<tr><td>Activity</td><td>title, type, plannedDate, completed, notes, fieldId, assignedUserId, createdBy.</td></tr>
+<tr><td>Notification</td><td>title, message, date, isRead, userId.</td></tr>
+<tr><td>Contract</td><td>employeeId, ownerId, startDate, endDate, salary, status, notes.</td></tr>
+<tr><td>Crop</td><td>name, fieldId; omogućava buduće proširenje na druge kulture.</td></tr>
+</table>
+<div class="placeholder">SLIKA ZA NAKNADNO DODAVANJE 4<br>PMOV / ER dijagram baze podataka</div>
+
+<h1>4. Tehnologije i integracije</h1>
+<table>
+<tr><th>Sloj</th><th>Tehnologije</th></tr>
+<tr><td>Frontend</td><td>React 19, React Router, Axios, Chart.js, react-chartjs-2, @react-google-maps/api, CSS.</td></tr>
+<tr><td>Backend</td><td>Node.js, Express, Sequelize, express-validator, JWT, bcryptjs, Helmet, express-rate-limit.</td></tr>
+<tr><td>Baza</td><td>MySQL 8.</td></tr>
+<tr><td>Dokumentovanje</td><td>Swagger/OpenAPI i README.</td></tr>
+<tr><td>DevOps</td><td>Docker, Docker Compose, GitHub Actions i k6 scenario.</td></tr>
+<tr><td>Eksterni API-ji</td><td>Google Maps JavaScript API i Open-Meteo Forecast API.</td></tr>
+</table>
+
+<h1>5. Implementacija korisničkog interfejsa</h1>
+<p>Vizuelni identitet koristi tamnozelenu, svetlozelenu i neutralnu paletu koja asocira na pšenicu i poljoprivredu. Navigacija je responzivna i na manjim ekranima prelazi u mobilni meni. Pozadinska fotografija pšenice je lokalni resurs projekta, tako da osnovni izgled ne zavisi od spoljnog servera.</p>
+<p>Forme koriste odgovarajuće tipove polja, padajuće liste i poruke sa stanjem. Kada postoje ranije unete vrednosti sorte, đubriva, zaštite ili navodnjavanja, one se nude u listi. Opcija „Drugo” otvara unos nove vrednosti.</p>
+<div class="placeholder">SLIKA ZA NAKNADNO DODAVANJE 5<br>Ekran za prijavu i prikaz lozinke</div>
+<div class="placeholder">SLIKA ZA NAKNADNO DODAVANJE 6<br>Početna strana i vremenski podaci</div>
+<div class="placeholder">SLIKA ZA NAKNADNO DODAVANJE 7<br>Parcele i izbor tačke na mapi</div>
+<div class="placeholder">SLIKA ZA NAKNADNO DODAVANJE 8<br>Forma proizvodnje pšenice</div>
+<div class="placeholder">SLIKA ZA NAKNADNO DODAVANJE 9<br>Troškovi sa padajućim listama</div>
+<div class="placeholder">SLIKA ZA NAKNADNO DODAVANJE 10<br>Kalendar aktivnosti i zadaci</div>
+<div class="placeholder">SLIKA ZA NAKNADNO DODAVANJE 11<br>Izveštaji, grafikoni i profitabilnost</div>
+<div class="placeholder">SLIKA ZA NAKNADNO DODAVANJE 12<br>Ugovori zaposlenih</div>
+
+<h1>6. API i bezbednost</h1>
+<h2>6.1. REST API</h2>
+<p>API je organizovan po resursima: /api/users, /api/fields, /api/productions, /api/expenses, /api/activities, /api/contracts, /api/notifications i /api/reports. Swagger interfejs je dostupan na /api-docs.</p>
+<div class="placeholder">SLIKA ZA NAKNADNO DODAVANJE 13<br>Swagger UI sa prikazom ruta</div>
+
+<h2>6.2. Bezbednosne mere</h2>
+<ul>
+<li>Lozinke se nikada ne vraćaju kroz listu korisnika i čuvaju se kao bcrypt hash.</li>
+<li>JWT sadrži identifikator korisnika i ulogu, traje jedan dan i šalje se u Authorization zaglavlju.</li>
+<li>Backend proverava ulogu pre osetljivih akcija; sakrivanje menija nije jedina zaštita.</li>
+<li>Helmet postavlja bezbednosna zaglavlja, JSON telo je ograničeno, a prijava ima rate limit.</li>
+<li>JWT tajna, podaci baze i Google Maps ključ nalaze se u lokalnim .env datotekama ignorisanim u Gitu.</li>
+<li>HTTPS se uključuje na reverse proxy ili cloud platformi u produkciji.</li>
+</ul>
+
+<h1>7. Docker, CI/CD, backup i cloud</h1>
+<h2>7.1. Docker</h2>
+<p>Docker Compose pokreće MySQL, backend i frontend. Baza koristi trajni volumen. Backend dobija parametre baze kroz environment promenljive, pa nije vezan za localhost niti jednu cloud platformu.</p>
+<p class="code">docker compose up --build</p>
+
+<h2>7.2. CI/CD</h2>
+<p>GitHub Actions se aktivira za granu main i pull request. Pipeline instalira zavisnosti sa npm ci, pokreće backend testove, gradi produkcioni frontend i proverava izgradnju obe Docker slike. Namerno ne objavljuje slike na tuđi Docker Hub nalog; objava se može dodati kada vlasnik repozitorijuma definiše svoje secrets vrednosti.</p>
+<div class="placeholder">SLIKA ZA NAKNADNO DODAVANJE 14<br>Uspešan GitHub Actions pipeline</div>
+
+<h2>7.3. Backup, dostupnost i cloud</h2>
+<p>Skripta scripts/backup-db.ps1 koristi mysqldump i pravi vremenski označenu rezervnu kopiju. U produkciji se zakazuje najmanje jednom dnevno i kopija se čuva van servera. Endpoint /api/health proverava i API i vezu sa bazom, pa ga cloud monitoring može koristiti za upozorenja i restart.</p>
+<p>Aplikacija se može postaviti na AWS, Azure, Google Cloud, Render ili sličnu platformu koja podržava kontejnere. Za produkciju treba podesiti upravljanu MySQL bazu, jaku JWT tajnu, HTTPS domen, politiku CORS-a, backup raspored i monitoring dostupnosti.</p>
+
+<h1>8. Testiranje i vizuelizacija</h1>
+<h2>8.1. Automatizovani testovi</h2>
+<p>Backend koristi Jest i Supertest za proveru osnovnog API-ja i zaštićenih ruta. Frontend koristi React Testing Library, a produkcioni build ujedno proverava kompajliranje svih komponenti. CI izvršava iste provere na svakom push-u.</p>
+<p>Komande:</p>
+<p class="code">cd backend
+npm test -- --runInBand
+
+cd ../frontend
+npm run build</p>
+<p>Za proveru cilja od 500 istovremenih korisnika priložen je k6 scenario u scripts/load-test.js. Konačne performanse zavise od hardvera i cloud konfiguracije i moraju se izmeriti u okruženju sličnom produkcionom.</p>
+<div class="placeholder">SLIKA ZA NAKNADNO DODAVANJE 15<br>Rezultat backend testova i frontend build-a</div>
+
+<h2>8.2. Vizuelizacija</h2>
+<p>Google mapa pretvara klik korisnika u validnu geografsku širinu i dužinu. Izveštaji koriste stubičaste i kružne grafikone: seme i prinos po proizvodnji, raspodelu troškova po tipu i poređenje prihoda, troškova i dobiti između sezona.</p>
+
+<h1>9. Pokretanje projekta</h1>
+<ol>
+<li>Instalirati Node.js 18+ i MySQL 8.</li>
+<li>Kreirati bazu agriculture_db.</li>
+<li>Kopirati backend/.env.example u backend/.env i popuniti podatke.</li>
+<li>Kopirati frontend/.env.example u frontend/.env i uneti Google Maps ključ.</li>
+<li>U backend direktorijumu izvršiti npm install i npm start.</li>
+<li>Jednom pokrenuti seed-test-data.sql ako su potrebni testni podaci.</li>
+<li>U frontend direktorijumu izvršiti npm install i npm start.</li>
+<li>Otvoriti http://localhost:3000. Testna lozinka je Test123!, a email nalozi su navedeni u SQL skripti.</li>
+</ol>
+
+<h1>10. Zaključak</h1>
+<p>AgroPanel realizuje centralizovano upravljanje proizvodnjom pšenice i povezuje operativne, finansijske i kadrovske podatke. U odnosu na početni projekat, uvedeni su izbor koordinata na mapi, detaljna validacija, pšenica kao domen, padajuće liste sa unosom novih vrednosti, profitabilnost, poređenje sezona, izvoz, vremenski podaci, aktivnosti, ugovori, preciznije dozvole, sigurnosna poboljšanja i pouzdaniji DevOps postupak.</p>
+<p>Predložena naredna unapređenja su skladištenje dokumenata uz ugovore, naprednija prognoza bolesti pšenice, 2FA i automatsko slanje email ili push obaveštenja.</p>
+</body>
+</html>

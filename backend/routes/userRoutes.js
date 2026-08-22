@@ -97,6 +97,7 @@ const auth = require('../middleware/auth');
  *         description: Neautorizovan
  */
 
+router.get('/', auth, userController.getAll);
 router.post('/register', auth, userController.register);
 router.post('/login', userController.login);
 router.get('/me', auth, async (req, res) => {

@@ -16,10 +16,12 @@ const initialForm = {
   fertilizationQuantity: '',
   fertilizationDate: '',
   protectionType: '',
+  protectionDate: '',
   irrigationSystem: '',
   waterUsed: '',
   harvestDate: '',
-  yieldKg: ''
+  yieldKg: '',
+  salePricePerKg: ''
 };
 
 const DEFAULT_PROTECTION_OPTIONS = [
@@ -50,7 +52,8 @@ export default function Productions() {
 
   const user = getUserFromToken();
   const roleId = Number(getRole());
-  const canEdit = [ROLES.ADMIN, ROLES.MANAGER, ROLES.OWNER].includes(roleId);
+  const canEdit = [ROLES.ADMIN, ROLES.MANAGER, ROLES.AGRONOM, ROLES.OWNER, ROLES.RADNIK].includes(roleId);
+  const canDelete = [ROLES.ADMIN, ROLES.MANAGER, ROLES.OWNER].includes(roleId);
 
   const hybridOptions = useMemo(() => (
     [...new Set(productions.map(item => item.hybrid?.trim()).filter(Boolean))].sort()
@@ -198,10 +201,12 @@ export default function Productions() {
       fertilizationQuantity: p.fertilizationQuantity || '',
       fertilizationDate: p.fertilizationDate ? String(p.fertilizationDate).slice(0, 10) : '',
       protectionType: p.protectionType || '',
+      protectionDate: p.protectionDate ? String(p.protectionDate).slice(0, 10) : '',
       irrigationSystem: p.irrigationSystem || '',
       waterUsed: p.waterUsed || '',
       harvestDate: p.harvestDate ? String(p.harvestDate).slice(0, 10) : '',
-      yieldKg: p.yieldKg || ''
+      yieldKg: p.yieldKg || '',
+      salePricePerKg: p.salePricePerKg || ''
     });
   };
 
@@ -270,10 +275,12 @@ export default function Productions() {
             <Input label="Količina đubriva" name="fertilizationQuantity" value={form.fertilizationQuantity} onChange={handleChange} />
             <Input label="Datum đubrenja" name="fertilizationDate" type="date" min={form.sowingDate || undefined} value={form.fertilizationDate} onChange={handleChange} />
             {renderChoice('Zaštita', 'protectionType', protectionOptions)}
+            <Input label="Datum zaštite" name="protectionDate" type="date" value={form.protectionDate} onChange={handleChange} />
             {renderChoice('Navodnjavanje', 'irrigationSystem', irrigationOptions)}
             <Input label="Potrošnja vode (m3)" name="waterUsed" value={form.waterUsed} onChange={handleChange} />
             <Input label="Datum žetve" name="harvestDate" type="date" min={form.fertilizationDate || undefined} value={form.harvestDate} onChange={handleChange} />
             <Input label="Prinos (kg)" name="yieldKg" value={form.yieldKg} onChange={handleChange} />
+            <Input label="Prodajna cena (RSD/kg)" name="salePricePerKg" type="number" min="0" step="0.01" value={form.salePricePerKg} onChange={handleChange} />
 
             {message && <div className={`form-message ${message.type}`} role="alert">{message.text}</div>}
 
@@ -300,14 +307,16 @@ export default function Productions() {
               <p>Đubrivo: {p.fertilizationType ?? '-'} ({p.fertilizationQuantity ?? '-'})</p>
               <p>Datum đubrenja: {formatDate(p.fertilizationDate)}</p>
               <p>Zaštita: {p.protectionType ?? '-'}</p>
+              <p>Datum zaštite: {formatDate(p.protectionDate)}</p>
               <p>Navodnjavanje: {p.irrigationSystem ?? '-'} ({p.waterUsed ?? '-'} m3)</p>
               <p>Datum žetve: {formatDate(p.harvestDate)}</p>
               <p>Prinos: {p.yieldKg ?? '-'} kg</p>
+              <p>Prodajna cena: {p.salePricePerKg ?? '-'} RSD/kg</p>
 
               {canEdit && (
                 <>
                   <Button onClick={() => startEdit(p)}>Izmeni</Button>
-                  <Button onClick={() => removeProduction(p.id)} style={{ marginLeft: '10px' }}>Obriši</Button>
+                  {canDelete && <Button onClick={() => removeProduction(p.id)} style={{ marginLeft: '10px' }}>Obriši</Button>}
                 </>
               )}
             </Card>

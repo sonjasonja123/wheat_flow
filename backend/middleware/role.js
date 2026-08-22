@@ -1,7 +1,7 @@
 module.exports = (...allowedRoles) => {
   return (req, res, next) => {
-    if (!allowedRoles.includes(req.user.role)) {
-      return res.status(403).json({ error: 'Forbidden' });
+    if (!req.user || !allowedRoles.includes(Number(req.user.roleId))) {
+      return res.status(403).json({ message: 'Nemate dozvolu za ovu akciju.' });
     }
     next();
   };

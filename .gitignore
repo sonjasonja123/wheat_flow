@@ -5,6 +5,8 @@ node_modules/
 build/
 dist/
 coverage/
+backups/
+uploads/
 
 # Local environment and secrets
 .env
@@ -37,3 +39,21 @@ temp/
 *.tmp
 *.bak
 *.cache
+~$*.doc
+~$*.docx
+~$*.xlsx
+
+# Database dumps and local databases
+*.dump
+*.sqlite
+*.sqlite3
+*.db
+*.sql.gz
+
+# Private keys and certificates
+*.pem
+*.key
+*.p12
+*.pfx
+*.crt
+*.cer

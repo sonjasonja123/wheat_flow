@@ -1,66 +1,68 @@
+# AgroPanel — upravljanje proizvodnjom pšenice
 
-# Sistem za upravljanje poljoprivrednom proizvodnjom
+AgroPanel je full-stack informacioni sistem za parcele, proizvodnju pšenice, troškove, aktivnosti zaposlenih, ugovore, obaveštenja i analitičke izveštaje.
 
+## Glavne mogućnosti
 
-Ova aplikacija predstavlja informacioni sistem za evidenciju i upravljanje poljoprivrednom proizvodnjom. Namenjena je proizvođačima i administratorima radi praćenja parcela, proizvodnje, prinosa i statistike.
+- JWT prijava i autorizacija za administratora, menadžera, agronoma, vlasnika i radnika
+- CRUD parcela, izbor tipa zemljišta i odabir koordinata na Google mapi
+- proizvodnja pšenice: setva, sorta, đubrenje, zaštita, navodnjavanje, žetva, prinos i prodajna cena
+- kontrola redosleda datuma: setva → đubrenje → žetva
+- troškovi povezani sa parcelom i proizvodnjom
+- kalendar aktivnosti, dodela radniku, beleške i automatska obaveštenja
+- evidencija ugovora zaposlenih
+- prinos, prihodi, troškovi, profitabilnost i poređenje sezona
+- grafikoni i izvoz izveštaja u Excel/štampu odnosno PDF
+- Google Maps i Open-Meteo integracije
+- Swagger, Docker Compose i GitHub Actions
 
-Aplikacija je razvijena kao full-stack web rešenje sa REST API-jem, Docker podrškom i automatizovanim procesima.
+## Lokalno pokretanje
 
----
+Preduslovi su Node.js 18+, MySQL 8 i dve terminalske sesije.
 
+1. Napravite bazu `agriculture_db`.
+2. Kopirajte `backend/.env.example` u `backend/.env` i unesite svoje vrednosti.
+3. Kopirajte `frontend/.env.example` u `frontend/.env` i unesite Google Maps ključ.
+4. Pokrenite backend:
 
-## Funkcionalnosti
+```powershell
+cd backend
+npm install
+npm start
+```
 
+5. U drugom terminalu pokrenite frontend:
 
-- Upravljanje poljoprivrednim parcelama
-- Evidencija proizvodnje i prinosa
-- Pregled statistike i izveštaja
-- Autentifikacija i autorizacija korisnika
-- Vizualizacija podataka (grafici / mapa)
-- Integracija sa eksternim API-jima
+```powershell
+cd frontend
+npm install
+npm start
+```
 
----
+Aplikacija je na http://localhost:3000, API na http://localhost:5000, a Swagger na http://localhost:5000/api-docs.
 
+Za testne podatke prvo jednom pokrenite backend da Sequelize napravi tabele, zatim izvršite `backend/seed-test-data.sql`. Svi testni nalozi koriste lozinku `Test123!`; email adrese su navedene na kraju SQL skripte.
 
-## Tehnologije
+## Docker
 
+```powershell
+docker compose up --build
+```
 
-### Backend
-- Node.js
-- Express.js
-- Sequelize ORM
-- MySQL 
-- Swagger (OpenAPI)
+MySQL podaci se čuvaju u Docker volumenu `mysql_data`. Vrednost `JWT_SECRET` iz Compose datoteke služi samo za lokalni razvoj i mora se zameniti u produkciji.
 
-### Frontend
-- React
-- Axios
-- Chart.js / Google Charts *(ili Google Maps API)*
+## Provera
 
-### DevOps
-- Docker
-- Docker Compose
-- GitHub Actions (CI/CD)
+```powershell
+cd backend
+npm test -- --runInBand
 
----
+cd ..\frontend
+npm run build
+```
 
+Opcioni k6 test u `scripts/load-test.js` postepeno simulira do 500 korisnika. PowerShell skripta `scripts/backup-db.ps1` pravi MySQL rezervnu kopiju; za dnevno izvršavanje može se povezati sa Windows Task Scheduler-om.
 
-## Pokretanje aplikacije lokalno
--bash koji je otvoren u backendu
--npm start
+## Bezbednost i produkcija
 
--bash koji je otvoren u frontendu
--npm start
-
----
-
-## Pokretanje aplikacije (Docker)
-
-
-### Preduslovi
-- Docker
-- Docker Compose
-
-### Pokretanje
-```bash
-docker-compose up --build
+Lozinke se čuvaju kao bcrypt hash, API koristi JWT, provera uloga postoji i na serveru, ograničena je učestalost pokušaja prijave, a Helmet postavlja sigurnosna HTTP zaglavlja. Tajne i lokalne `.env` datoteke se ne čuvaju u Gitu. HTTPS i automatizovan dnevni raspored rezervnih kopija podešavaju se na izabranoj cloud platformi.

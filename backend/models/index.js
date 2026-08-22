@@ -1,5 +1,14 @@
 const { Sequelize, DataTypes } = require('sequelize');
-const config = require('../config/config.json')['development'];
+require('dotenv').config();
+const fileConfig = require('../config/config.json')[process.env.NODE_ENV || 'development'];
+const config = {
+  database: process.env.DB_NAME || fileConfig.database,
+  username: process.env.DB_USER || fileConfig.username,
+  password: process.env.DB_PASSWORD ?? fileConfig.password,
+  host: process.env.DB_HOST || fileConfig.host,
+  port: Number(process.env.DB_PORT || 3306),
+  dialect: fileConfig.dialect
+};
 
 const sequelize = new Sequelize(
   config.database,
@@ -7,6 +16,7 @@ const sequelize = new Sequelize(
   config.password,
   {
     host: config.host,
+    port: config.port,
     dialect: config.dialect,
     logging: false,
   }
@@ -15,19 +25,21 @@ const sequelize = new Sequelize(
 const db = {};
 
 // Import modela (malim slovom – ime fajla)
-db.Role = require('./role')(sequelize, DataTypes);
-db.User = require('./user')(sequelize, DataTypes);
-db.Field = require('./field')(sequelize, DataTypes);
-db.Crop = require('./crop')(sequelize, DataTypes);
-db.Production = require('./production')(sequelize, DataTypes);
-db.Expense = require('./expense')(sequelize, DataTypes);
-db.Notification = require('./Notification')(sequelize, DataTypes); // ispravljeno
+db.Role = require('./Role')(sequelize, DataTypes);
+db.User = require('./User')(sequelize, DataTypes);
+db.Field = require('./Field')(sequelize, DataTypes);
+db.Crop = require('./Crop')(sequelize, DataTypes);
+db.Production = require('./Production')(sequelize, DataTypes);
+db.Expense = require('./Expense')(sequelize, DataTypes);
+db.Notification = require('./Notification')(sequelize, DataTypes);
+db.Activity = require('./Activity')(sequelize, DataTypes);
+db.Contract = require('./Contract')(sequelize, DataTypes);
 
 // Definisanje veza
 
 // User - Role (M:1)
-db.Role.hasMany(db.User, { foreignKey: 'roleId' });
-db.User.belongsTo(db.Role, { foreignKey: 'roleId' });
+db.Role.hasMany(db.User, { foreignKey: 'roleId', constraints: false });
+db.User.belongsTo(db.Role, { foreignKey: 'roleId', constraints: false });
 
 // Field - Crop (1:M)
 db.Field.hasMany(db.Crop, { foreignKey: 'fieldId', onDelete: 'CASCADE' });
@@ -44,6 +56,15 @@ db.Expense.belongsTo(db.Production, { foreignKey: 'productionId' });
 // Notification - User (M:1) (opciono)
 db.User.hasMany(db.Notification, { foreignKey: 'userId', onDelete: 'SET NULL' });
 db.Notification.belongsTo(db.User, { foreignKey: 'userId' });
+
+db.Field.hasMany(db.Activity, { foreignKey: 'fieldId', onDelete: 'SET NULL' });
+db.Activity.belongsTo(db.Field, { foreignKey: 'fieldId' });
+db.User.hasMany(db.Activity, { foreignKey: 'assignedUserId', as: 'assignedActivities', onDelete: 'SET NULL' });
+db.Activity.belongsTo(db.User, { foreignKey: 'assignedUserId', as: 'assignee' });
+db.User.hasMany(db.Activity, { foreignKey: 'createdBy', as: 'createdActivities' });
+
+db.Contract.belongsTo(db.User, { foreignKey: 'employeeId', as: 'employee' });
+db.Contract.belongsTo(db.User, { foreignKey: 'ownerId', as: 'owner' });
 
 // Dodaj sequelize i Sequelize objekat
 db.sequelize = sequelize;

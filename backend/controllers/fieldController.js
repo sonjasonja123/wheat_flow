@@ -15,7 +15,7 @@ exports.getAll = async (req, res) => {
 exports.create = async (req, res) => {
   try {
     // Samo Admin i Owner mogu da dodaju
-    if (![1, 4].includes(req.user.roleId)) {
+    if (![1, 2, 4].includes(req.user.roleId)) {
       return res.status(403).json({ message: 'Niste ovlašćeni da dodate parcelu' });
     }
 
@@ -32,7 +32,7 @@ exports.create = async (req, res) => {
 exports.update = async (req, res) => {
   try {
     // Samo Admin i Owner mogu da menjaju
-    if (![1, 4].includes(req.user.roleId)) {
+    if (![1, 2, 4].includes(req.user.roleId)) {
       return res.status(403).json({ message: 'Niste ovlašćeni da menjate parcelu' });
     }
 
@@ -53,7 +53,7 @@ exports.update = async (req, res) => {
 exports.remove = async (req, res) => {
   try {
     // Samo Admin i Owner mogu da brišu
-    if (![1, 4].includes(req.user.roleId)) {
+    if (![1, 2, 4].includes(req.user.roleId)) {
       return res.status(403).json({ message: 'Niste ovlašćeni da obrišete parcelu' });
     }
 

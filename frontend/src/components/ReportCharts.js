@@ -32,6 +32,15 @@ export default function ReportCharts({ report }) {
     }]
   };
 
+  const seasonData = {
+    labels: (report.seasonComparison || []).map(item => item.year),
+    datasets: [
+      { label: 'Prihod (RSD)', data: (report.seasonComparison || []).map(item => item.revenue), backgroundColor: '#3f7d5e' },
+      { label: 'Troškovi (RSD)', data: (report.seasonComparison || []).map(item => item.expenses), backgroundColor: '#e3a857' },
+      { label: 'Dobit (RSD)', data: (report.seasonComparison || []).map(item => item.profit), backgroundColor: '#c7dd73' }
+    ]
+  };
+
   const commonOptions = {
     responsive: true,
     maintainAspectRatio: false,
@@ -45,6 +54,9 @@ export default function ReportCharts({ report }) {
       </CardChart>
       <CardChart title="Raspodela troškova po tipu">
         {report.expenses.length ? <Doughnut data={expenseData} options={commonOptions} /> : <p>Nema podataka za grafikon troškova.</p>}
+      </CardChart>
+      <CardChart title="Poređenje sezona">
+        {(report.seasonComparison || []).length ? <Bar data={seasonData} options={commonOptions} /> : <p>Nema podataka za poređenje sezona.</p>}
       </CardChart>
     </div>
   );

@@ -32,9 +32,9 @@ export default function Expenses() {
   const [message, setMessage] = useState(null);
 
   const roleId = Number(getRole());
-  const canAdd = [ROLES.ADMIN, ROLES.MANAGER, ROLES.OWNER, ROLES.RADNIK].includes(roleId);
+  const canAdd = [ROLES.ADMIN, ROLES.MANAGER, ROLES.OWNER].includes(roleId);
   const canEditDelete = [ROLES.ADMIN, ROLES.MANAGER, ROLES.OWNER].includes(roleId);
-  const canView = roleId !== ROLES.AGRONOM;
+  const canView = [ROLES.ADMIN, ROLES.MANAGER, ROLES.OWNER].includes(roleId);
 
   const loadExpenses = useCallback(async () => {
     if (!canView) {
