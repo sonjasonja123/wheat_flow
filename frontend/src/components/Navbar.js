@@ -49,6 +49,7 @@ export default function Navbar() {
             {[1, 2, 3, 4].includes(authState.roleId) && <NavLink to="/reports" onClick={closeMenu}>Izveštaji</NavLink>}
             <NavLink to="/notifications" onClick={closeMenu}>Obaveštenja</NavLink>
             <NavLink to="/activities" onClick={closeMenu}>Aktivnosti</NavLink>
+            {[1, 4].includes(authState.roleId) && <NavLink to="/contracts" onClick={closeMenu}>Ugovori</NavLink>}
             {[1, 4].includes(authState.roleId) && <NavLink to="/register" onClick={closeMenu}>Korisnici</NavLink>}
             <span className="navbar-role">{roleNames[authState.roleId] || 'Korisnik'}</span>
             <button type="button" className="navbar-login navbar-button" onClick={handleLogout}>Odjava</button>

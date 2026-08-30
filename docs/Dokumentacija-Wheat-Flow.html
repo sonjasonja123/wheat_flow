@@ -69,6 +69,7 @@ ul, ol { margin-top: 4pt; }
 <tr><td>Troškovi</td><td>Unos vrste, opisa, iznosa i datuma; povezivanje sa parcelom i proizvodnjom preko padajućih lista; pregled po parceli i sezoni.</td></tr>
 <tr><td>Aktivnosti</td><td>Kalendar planiranih radova, tip aktivnosti, parcela, dodeljeni zaposleni, status završenosti i beleške.</td></tr>
 <tr><td>Obaveštenja</td><td>Podsetnici izvedeni iz proizvodnih datuma i automatsko obaveštenje radniku kada mu se dodeli aktivnost.</td></tr>
+<tr><td>Ugovori</td><td>Vlasnik ili administrator vodi početak, završetak, zaradu, status i napomenu ugovora zaposlenog.</td></tr>
 <tr><td>Izveštaji</td><td>Prinos po proizvodnji i parceli, struktura troškova, prihod, dobit/gubitak i poređenje sezona. Izvoz u Excel format i štampa/čuvanje u PDF.</td></tr>
 <tr><td>Vreme</td><td>Početna strana prikazuje aktuelnu temperaturu, vlažnost, padavine i vetar za prvu parcelu sa koordinatama.</td></tr>
 <tr><td>Korisnici</td><td>Administrator i vlasnik dodaju korisnike i dodeljuju uloge u granicama svojih dozvola.</td></tr>
@@ -88,10 +89,10 @@ ul, ol { margin-top: 4pt; }
 <h2>1.4. Uloge i dozvole</h2>
 <table>
 <tr><th>Uloga</th><th>Dozvole</th></tr>
-<tr><td>Administrator</td><td>Pun pristup svim modulima, korisnicima i izveštajima.</td></tr>
+<tr><td>Administrator</td><td>Pun pristup svim modulima, korisnicima, ugovorima i izveštajima.</td></tr>
 <tr><td>Menadžer</td><td>Upravljanje parcelama, proizvodnjom, troškovima i aktivnostima; pregled izveštaja.</td></tr>
 <tr><td>Agronom</td><td>Pregled parcela, unos i izmena proizvodnih podataka i stručnih aktivnosti; pregled izveštaja; bez brisanja proizvodnje.</td></tr>
-<tr><td>Vlasnik</td><td>Upravljanje svim podacima gazdinstva i korisnicima.</td></tr>
+<tr><td>Vlasnik</td><td>Upravljanje svim podacima gazdinstva, korisnicima i ugovorima.</td></tr>
 <tr><td>Radnik</td><td>Pregled parcela, unos operativnih proizvodnih podataka, pregled i završavanje sopstvenih zadataka; nema troškove ni izveštaje.</td></tr>
 </table>
 
@@ -142,6 +143,7 @@ ul, ol { margin-top: 4pt; }
 <tr><td>Expense</td><td>fieldId, productionId, type, description, amount, date.</td></tr>
 <tr><td>Activity</td><td>title, type, plannedDate, completed, notes, fieldId, assignedUserId, createdBy.</td></tr>
 <tr><td>Notification</td><td>title, message, date, isRead, userId.</td></tr>
+<tr><td>Contract</td><td>employeeId, ownerId, startDate, endDate, salary, status, notes.</td></tr>
 <tr><td>Crop</td><td>name, fieldId; omogućava buduće proširenje na druge kulture.</td></tr>
 </table>
 <div class="placeholder">SLIKA ZA NAKNADNO DODAVANJE 4<br>PMOV / ER dijagram baze podataka</div>
@@ -170,7 +172,7 @@ ul, ol { margin-top: 4pt; }
 
 <h1>6. API i bezbednost</h1>
 <h2>6.1. REST API</h2>
-<p>API je organizovan po resursima: /api/users, /api/fields, /api/productions, /api/expenses, /api/activities, /api/notifications i /api/reports. Swagger interfejs je dostupan na /api-docs.</p>
+<p>API je organizovan po resursima: /api/users, /api/fields, /api/productions, /api/expenses, /api/activities, /api/contracts, /api/notifications i /api/reports. Swagger interfejs je dostupan na /api-docs.</p>
 <div class="placeholder">SLIKA ZA NAKNADNO DODAVANJE 13<br>Swagger UI sa prikazom ruta</div>
 
 <h2>6.2. Bezbednosne mere</h2>

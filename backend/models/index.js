@@ -33,6 +33,7 @@ db.Production = require('./Production')(sequelize, DataTypes);
 db.Expense = require('./Expense')(sequelize, DataTypes);
 db.Notification = require('./Notification')(sequelize, DataTypes);
 db.Activity = require('./Activity')(sequelize, DataTypes);
+db.Contract = require('./Contract')(sequelize, DataTypes);
 
 // Definisanje veza
 
@@ -63,6 +64,9 @@ db.Activity.belongsTo(db.Production, { foreignKey: 'productionId' });
 db.User.hasMany(db.Activity, { foreignKey: 'assignedUserId', as: 'assignedActivities', onDelete: 'SET NULL' });
 db.Activity.belongsTo(db.User, { foreignKey: 'assignedUserId', as: 'assignee' });
 db.User.hasMany(db.Activity, { foreignKey: 'createdBy', as: 'createdActivities' });
+
+db.Contract.belongsTo(db.User, { foreignKey: 'employeeId', as: 'employee' });
+db.Contract.belongsTo(db.User, { foreignKey: 'ownerId', as: 'owner' });
 
 // Dodaj sequelize i Sequelize objekat
 db.sequelize = sequelize;

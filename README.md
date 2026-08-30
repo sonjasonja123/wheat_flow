@@ -1,6 +1,6 @@
 # Wheat Flow — upravljanje proizvodnjom pšenice
 
-Wheat Flow je full-stack informacioni sistem za parcele, proizvodnju pšenice, troškove, aktivnosti zaposlenih, obaveštenja i analitičke izveštaje.
+Wheat Flow je full-stack informacioni sistem za parcele, proizvodnju pšenice, troškove, aktivnosti zaposlenih, ugovore, obaveštenja i analitičke izveštaje.
 
 ## Glavne mogućnosti
 
@@ -13,6 +13,7 @@ Wheat Flow je full-stack informacioni sistem za parcele, proizvodnju pšenice, t
 - aktivnosti povezane sa proizvodnjom: izbor faze automatski popunjava naziv, parcelu i datum
 - mesečni kalendar aktivnosti sa navigacijom kroz mesece i označavanjem završenih zadataka
 - dodela aktivnosti zaposlenom, datumirani komentari/beleške i automatska obaveštenja
+- evidencija ugovora zaposlenih dostupna administratoru i vlasniku
 - prinos, prihodi, troškovi, profitabilnost i poređenje sezona
 - grafikoni i izvoz izveštaja u Excel/štampu odnosno PDF
 - Google Maps prikaz i izbor lokacija parcela
