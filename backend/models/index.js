@@ -1,6 +1,6 @@
 const { Sequelize, DataTypes } = require('sequelize');
 require('dotenv').config();
-const fileConfig = require('../config/config.json')[process.env.NODE_ENV || 'development'];
+const fileConfig = require('../config/config.js')[process.env.NODE_ENV || 'development'];
 const config = {
   database: process.env.DB_NAME || fileConfig.database,
   username: process.env.DB_USER || fileConfig.username,
