@@ -2,7 +2,7 @@
 
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.addColumn('Fields', 'area', {
+    await queryInterface.addColumn('fields', 'area', {
       type: Sequelize.FLOAT,
       allowNull: false,
       defaultValue: 0
@@ -10,6 +10,6 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
-    await queryInterface.removeColumn('Fields', 'area');
+    await queryInterface.removeColumn('fields', 'area');
   }
 };
