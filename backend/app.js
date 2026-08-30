@@ -55,21 +55,25 @@ app.get('/api/health', async (req, res) => {
 
 // Sinhronizacija sa bazom i start servera
 if (require.main === module) {
-  const PORT = process.env.PORT || 5000;
   const syncOptions = process.env.DB_SCHEMA_ALTER === 'true' ? { alter: true } : {};
   const prepareDatabase = process.env.NODE_ENV === 'production' && process.env.DB_SYNC !== 'true'
     ? db.sequelize.authenticate()
     : db.sequelize.sync(syncOptions);
   prepareDatabase
     .then(async () => {
-      await db.Role.bulkCreate([
-        { id: 1, name: 'Administrator' },
-        { id: 2, name: 'Menadžer' },
-        { id: 3, name: 'Agronom' },
-        { id: 4, name: 'Vlasnik' },
-        { id: 5, name: 'Radnik' }
-      ], { updateOnDuplicate: ['name'] });
+      try {
+        await db.Role.bulkCreate([
+          { id: 1, name: 'Administrator' },
+          { id: 2, name: 'Menadžer' },
+          { id: 3, name: 'Agronom' },
+          { id: 4, name: 'Vlasnik' },
+          { id: 5, name: 'Radnik' }
+        ], { updateOnDuplicate: ['name'] });
+      } catch (seedErr) {
+        console.error('Role seed preskočen (verovatno migracije još nisu pokrenute):', seedErr.message);
+      }
       console.log(process.env.NODE_ENV === 'production' ? "Database connected" : "Database ready");
+      const PORT = process.env.PORT || 5000;
       app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
     })
     .catch((err) => console.error("Error syncing DB:", err));
