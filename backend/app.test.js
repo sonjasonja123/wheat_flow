@@ -174,4 +174,11 @@ describe("Kontrola pristupa po ulozi (RBAC)", () => {
     expect(res.statusCode).not.toBe(403);
   });
 
+  test("Menadzer ne moze da vidi ugovore (GET /api/contracts -> 403)", async () => {
+    const res = await request(app)
+      .get("/api/contracts")
+      .set("Authorization", `Bearer ${tokenFor(MANAGER)}`);
+    expect(res.statusCode).toBe(403);
+  });
+
 });

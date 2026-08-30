@@ -24,6 +24,7 @@ const cropRoutes = require("./routes/cropRoutes");
 const expenseRoutes = require("./routes/expenseRoutes");
 const reportRoutes = require("./routes/reportRoutes");
 const activityRoutes = require("./routes/activityRoutes");
+const contractRoutes = require("./routes/contractRoutes");
 const { swaggerUi, swaggerSpec } = require('./swagger');
 
 // Middleware rute
@@ -36,6 +37,7 @@ app.use("/api/crops", cropRoutes);
 app.use("/api/expenses", expenseRoutes);
 app.use("/api/reports", reportRoutes);
 app.use("/api/activities", activityRoutes);
+app.use("/api/contracts", contractRoutes);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Test ruta
