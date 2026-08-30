@@ -1,6 +1,8 @@
 const request = require("supertest");
 const app = require("./app");
 const jwt = require("jsonwebtoken");
+const { swaggerSpec } = require('./swagger');
+const { sanitizeText } = require('./utils/sanitize');
 
 // Isti fallback secret koji koriste auth middleware i kontroleri
 const SECRET = process.env.JWT_SECRET || "tajni_kljuc";
@@ -50,6 +52,32 @@ describe("API Endpoints", () => {
       expect(res.body).toHaveProperty("title");
       expect(res.body).toHaveProperty("message");
     }
+  });
+
+  test("POST /api/auth/logout potvrđuje odjavu za validan JWT", async () => {
+    const res = await request(app)
+      .post('/api/auth/logout')
+      .set('Authorization', `Bearer ${tokenFor(ADMIN)}`);
+    expect(res.statusCode).toBe(200);
+    expect(res.body.message).toMatch(/odjavili/i);
+  });
+
+  test("duplirane login i register rute pod /api/users ne postoje", async () => {
+    const login = await request(app).post('/api/users/login').send({});
+    const register = await request(app).post('/api/users/register').send({});
+    expect(login.statusCode).toBe(404);
+    expect(register.statusCode).toBe(404);
+  });
+
+  test("Swagger sadrži auth, crops i reports rute", () => {
+    expect(swaggerSpec.paths).toHaveProperty('/api/auth/logout');
+    expect(swaggerSpec.paths).toHaveProperty('/api/crops');
+    expect(swaggerSpec.paths).toHaveProperty('/api/crops/{id}');
+    expect(swaggerSpec.paths).toHaveProperty('/api/reports');
+  });
+
+  test("XSS sanitizacija uklanja HTML i script sadržaj", () => {
+    expect(sanitizeText('<script>alert(1)</script>Bezbedna beleška')).toBe('Bezbedna beleška');
   });
 
 });
