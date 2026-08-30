@@ -55,6 +55,7 @@ app.get('/api/health', async (req, res) => {
 
 // Sinhronizacija sa bazom i start servera
 if (require.main === module) {
+  const PORT = process.env.PORT || 5000;
   const syncOptions = process.env.DB_SCHEMA_ALTER === 'true' ? { alter: true } : {};
   const prepareDatabase = process.env.NODE_ENV === 'production' && process.env.DB_SYNC !== 'true'
     ? db.sequelize.authenticate()
@@ -69,7 +70,7 @@ if (require.main === module) {
         { id: 5, name: 'Radnik' }
       ], { updateOnDuplicate: ['name'] });
       console.log(process.env.NODE_ENV === 'production' ? "Database connected" : "Database ready");
-      app.listen(5000, () => console.log("Server running on port 5000"));
+      app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
     })
     .catch((err) => console.error("Error syncing DB:", err));
 }
