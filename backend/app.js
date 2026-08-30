@@ -9,7 +9,7 @@ app.use(helmet({ crossOriginResourcePolicy: false }));
 app.use(cors({ origin: process.env.FRONTEND_URL || 'http://localhost:3000' }));
 app.use(express.json({ limit: '200kb' }));
 app.use('/api/auth', rateLimit({ windowMs: 15 * 60 * 1000, limit: 100 }));
-app.use('/api/users/login', rateLimit({ windowMs: 15 * 60 * 1000, limit: 100 }));
+app.use('/api/auth/login', rateLimit({ windowMs: 15 * 60 * 1000, limit: 100 }));
 
 // Import modela i baza
 const db = require("./models");
@@ -55,7 +55,11 @@ app.get('/api/health', async (req, res) => {
 
 // Sinhronizacija sa bazom i start servera
 if (require.main === module) {
-  db.sequelize.sync({ alter: true })
+  const syncOptions = process.env.DB_SCHEMA_ALTER === 'true' ? { alter: true } : {};
+  const prepareDatabase = process.env.NODE_ENV === 'production' && process.env.DB_SYNC !== 'true'
+    ? db.sequelize.authenticate()
+    : db.sequelize.sync(syncOptions);
+  prepareDatabase
     .then(async () => {
       await db.Role.bulkCreate([
         { id: 1, name: 'Administrator' },
@@ -64,7 +68,7 @@ if (require.main === module) {
         { id: 4, name: 'Vlasnik' },
         { id: 5, name: 'Radnik' }
       ], { updateOnDuplicate: ['name'] });
-      console.log("Database synced");
+      console.log(process.env.NODE_ENV === 'production' ? "Database connected" : "Database ready");
       app.listen(5000, () => console.log("Server running on port 5000"));
     })
     .catch((err) => console.error("Error syncing DB:", err));

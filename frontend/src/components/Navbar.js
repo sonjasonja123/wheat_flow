@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { getRole, isAuthenticated, logout } from '../services/auth';
+import { api } from '../services/api';
 import logo from '../images/logo1.jpg';
 
 const roleNames = { 1: 'Administrator', 2: 'Menadžer', 3: 'Agronom', 4: 'Vlasnik', 5: 'Radnik' };
@@ -27,10 +28,14 @@ export default function Navbar() {
     };
   }, []);
 
-  const handleLogout = () => {
-    logout();
-    closeMenu();
-    navigate('/login');
+  const handleLogout = async () => {
+    try {
+      await api.post('/auth/logout');
+    } finally {
+      logout();
+      closeMenu();
+      navigate('/login');
+    }
   };
 
   return (

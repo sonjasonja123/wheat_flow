@@ -13,7 +13,7 @@ export default function Login() {
 
   const handleLogin = async () => {
     try {
-      const res = await api.post('/users/login', { email, password });
+      const res = await api.post('/auth/login', { email, password });
 
       // Sačuvaj token i korisnika
       saveAuth(res.data);
