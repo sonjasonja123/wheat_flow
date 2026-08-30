@@ -12,7 +12,7 @@ app.use('/api/auth', rateLimit({ windowMs: 15 * 60 * 1000, limit: 100 }));
 app.use('/api/users/login', rateLimit({ windowMs: 15 * 60 * 1000, limit: 100 }));
 
 // Import modela i baza
-const db = require("./models"); // tvoja Sequelize konfiguracija
+const db = require("./models");
 
 // Import ruta
 const authRoutes = require("./routes/authRoutes");
@@ -24,7 +24,6 @@ const cropRoutes = require("./routes/cropRoutes");
 const expenseRoutes = require("./routes/expenseRoutes");
 const reportRoutes = require("./routes/reportRoutes");
 const activityRoutes = require("./routes/activityRoutes");
-const contractRoutes = require("./routes/contractRoutes");
 const { swaggerUi, swaggerSpec } = require('./swagger');
 
 // Middleware rute
@@ -37,7 +36,6 @@ app.use("/api/crops", cropRoutes);
 app.use("/api/expenses", expenseRoutes);
 app.use("/api/reports", reportRoutes);
 app.use("/api/activities", activityRoutes);
-app.use("/api/contracts", contractRoutes);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Test ruta

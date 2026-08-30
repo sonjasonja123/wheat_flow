@@ -24,6 +24,13 @@ const initialForm = {
   salePricePerKg: ''
 };
 
+const WHEAT_VARIETY_OPTIONS = [
+  'Avenue',
+  'Simonida',
+  'Solindo CS',
+  'LG Asterion'
+];
+
 const DEFAULT_PROTECTION_OPTIONS = [
   'Herbicid',
   'Fungicid',
@@ -54,10 +61,6 @@ export default function Productions() {
   const roleId = Number(getRole());
   const canEdit = [ROLES.ADMIN, ROLES.MANAGER, ROLES.AGRONOM, ROLES.OWNER, ROLES.RADNIK].includes(roleId);
   const canDelete = [ROLES.ADMIN, ROLES.MANAGER, ROLES.OWNER].includes(roleId);
-
-  const hybridOptions = useMemo(() => (
-    [...new Set(productions.map(item => item.hybrid?.trim()).filter(Boolean))].sort()
-  ), [productions]);
 
   const fertilizerOptions = useMemo(() => (
     [...new Set(productions.map(item => item.fertilizationType?.trim()).filter(Boolean))].sort()
@@ -129,7 +132,7 @@ export default function Productions() {
     setForm(current => ({ ...current, [name]: isCustom ? '' : value }));
   };
 
-  const renderChoice = (label, name, options) => (
+  const renderChoice = (label, name, options, placeholder = `Izaberite ${label.toLowerCase()}`) => (
     <div className="input-group">
       <label htmlFor={name}>{label}</label>
       <select
@@ -138,7 +141,7 @@ export default function Productions() {
         value={customFields[name] ? '__custom__' : form[name]}
         onChange={handleChoiceChange}
       >
-        <option value="">Izaberite {label.toLowerCase()}</option>
+        <option value="">{placeholder}</option>
         {options.map(option => <option key={option} value={option}>{option}</option>)}
         <option value="__custom__">Drugo — unesi novu vrednost</option>
       </select>
@@ -270,11 +273,11 @@ export default function Productions() {
             </div>
             <Input label="Datum setve" name="sowingDate" type="date" value={form.sowingDate} onChange={handleChange} />
             <Input label="Količina semena (kg)" name="seedQuantity" value={form.seedQuantity} onChange={handleChange} />
-            {renderChoice('Sorta pšenice', 'hybrid', hybridOptions)}
+            {renderChoice('Sorta pšenice', 'hybrid', WHEAT_VARIETY_OPTIONS, 'Izaberite sortu pšenice')}
             {renderChoice('Đubrivo', 'fertilizationType', fertilizerOptions)}
             <Input label="Količina đubriva" name="fertilizationQuantity" value={form.fertilizationQuantity} onChange={handleChange} />
             <Input label="Datum đubrenja" name="fertilizationDate" type="date" min={form.sowingDate || undefined} value={form.fertilizationDate} onChange={handleChange} />
-            {renderChoice('Zaštita', 'protectionType', protectionOptions)}
+            {renderChoice('Zaštita', 'protectionType', protectionOptions, 'Izaberite zaštitu')}
             <Input label="Datum zaštite" name="protectionDate" type="date" value={form.protectionDate} onChange={handleChange} />
             {renderChoice('Navodnjavanje', 'irrigationSystem', irrigationOptions)}
             <Input label="Potrošnja vode (m3)" name="waterUsed" value={form.waterUsed} onChange={handleChange} />

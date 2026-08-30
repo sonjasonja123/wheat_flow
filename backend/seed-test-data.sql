@@ -9,7 +9,6 @@ USE agriculture_db;
 
 SET FOREIGN_KEY_CHECKS = 0;
 DELETE FROM notifications;
-DELETE FROM contracts;
 DELETE FROM activities;
 DELETE FROM Expenses;
 DELETE FROM crops;
@@ -79,11 +78,6 @@ VALUES
   (2, 'Priprema sistema za zalivanje', 'Navodnjavanje', '2026-05-18', 0, 'Pregledati filtere i creva.', 3, 5, 2, NOW(), NOW()),
   (3, 'Merenje prinosa', 'Žetva', '2026-07-04', 0, 'Upisati izmerenu količinu.', 2, 5, 4, NOW(), NOW());
 
-INSERT INTO contracts
-  (id, employeeId, ownerId, startDate, endDate, salary, status, notes, createdAt, updatedAt)
-VALUES
-  (1, 5, 4, '2026-01-01', '2026-12-31', 85000, 'Aktivan', 'Sezonski poslovi na proizvodnji pšenice.', NOW(), NOW());
-
 SET FOREIGN_KEY_CHECKS = 0;
 ALTER TABLE users AUTO_INCREMENT = 6;
 ALTER TABLE fields AUTO_INCREMENT = 5;
@@ -92,7 +86,6 @@ ALTER TABLE productions AUTO_INCREMENT = 5;
 ALTER TABLE Expenses AUTO_INCREMENT = 7;
 ALTER TABLE notifications AUTO_INCREMENT = 5;
 ALTER TABLE activities AUTO_INCREMENT = 4;
-ALTER TABLE contracts AUTO_INCREMENT = 2;
 SET FOREIGN_KEY_CHECKS = 1;
 
 SELECT email, roleId, 'Test123!' AS testPassword FROM users ORDER BY roleId;

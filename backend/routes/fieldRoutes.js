@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const controller = require('../controllers/fieldController');
 const authMiddleware = require('../middleware/auth');
-
+const allowRoles = require('../middleware/role');
 /**
  * @swagger
  * tags:
@@ -70,7 +70,7 @@ router.get('/', controller.getAll);
  *       400:
  *         description: Neispravan zahtev
  */
-router.post('/', controller.create);
+router.post('/', allowRoles(1, 2, 4), controller.create);
 
 /**
  * @swagger
@@ -99,7 +99,7 @@ router.post('/', controller.create);
  *       404:
  *         description: Parcela nije pronađena
  */
-router.put('/:id', controller.update);
+router.put('/:id', allowRoles(1, 2, 4), controller.update);
 
 /**
  * @swagger
@@ -122,6 +122,6 @@ router.put('/:id', controller.update);
  *       404:
  *         description: Parcela nije pronađena
  */
-router.delete('/:id', controller.remove);
+router.delete('/:id', allowRoles(1, 2, 4), controller.remove);
 
 module.exports = router;

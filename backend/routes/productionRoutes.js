@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const productionController = require('../controllers/productionController');
 const authMiddleware = require('../middleware/auth');
-
+const allowRoles = require('../middleware/role');
 /**
  * @swagger
  * tags:
@@ -53,6 +53,7 @@ const authMiddleware = require('../middleware/auth');
  */
 router.get('/', authMiddleware, productionController.getAll);
 
+
 /**
  * @swagger
  * /api/productions:
@@ -71,7 +72,7 @@ router.get('/', authMiddleware, productionController.getAll);
  *       200:
  *         description: Produkcija uspešno kreirana
  */
-router.post('/', authMiddleware, productionController.create);
+router.post('/', authMiddleware, allowRoles(1, 2, 4), productionController.create);
 
 /**
  * @swagger
@@ -97,7 +98,7 @@ router.post('/', authMiddleware, productionController.create);
  *       200:
  *         description: Produkcija uspešno ažurirana
  */
-router.put('/:id', authMiddleware, productionController.update);
-router.delete('/:id', authMiddleware, productionController.remove);
+router.put('/:id', authMiddleware, allowRoles(1, 2, 4), productionController.update);
+router.delete('/:id', authMiddleware, allowRoles(1, 2, 4), productionController.remove);
 
 module.exports = router;

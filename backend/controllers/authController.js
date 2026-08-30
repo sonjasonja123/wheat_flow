@@ -33,7 +33,8 @@ exports.login = async (req, res) => {
     );
     return res.json({
       token,
-      user: { id: user.id, name: user.name, email: user.email, roleId: user.roleId, role: user.Role?.name }
+      user: { id: user.id, name: user.name, email: user.email, roleId:
+         user.roleId, role: user.Role?.name }
     });
   } catch (error) {
     return res.status(500).json({ message: 'Prijava trenutno nije dostupna.' });

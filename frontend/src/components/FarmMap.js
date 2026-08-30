@@ -6,7 +6,7 @@ const defaultCenter = { lat: 44.0165, lng: 21.0059 };
 
 const FarmMap = ({ locations = [], apiKey, selectedPosition, onSelect }) => {
   const { isLoaded, loadError } = useJsApiLoader({
-    id: 'agropanel-google-map',
+    id: 'wheat-flow-google-map',
     googleMapsApiKey: apiKey
   });
 

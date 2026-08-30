@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const expenseController = require('../controllers/expenseController');
 const authMiddleware = require('../middleware/auth');
-
+const allowRoles = require('../middleware/role');
 /**
  * @swagger
  * tags:
@@ -56,7 +56,7 @@ const authMiddleware = require('../middleware/auth');
  *               items:
  *                 $ref: '#/components/schemas/Expense'
  */
-router.get('/', authMiddleware, expenseController.getAll);
+router.get('/', authMiddleware,allowRoles(1, 2, 4),  expenseController.getAll);
 
 /**
  * @swagger
@@ -76,7 +76,7 @@ router.get('/', authMiddleware, expenseController.getAll);
  *       200:
  *         description: Trošak uspešno dodat
  */
-router.post('/', authMiddleware, expenseController.create);
+router.post('/', authMiddleware,allowRoles(1, 2, 4),  expenseController.create);
 
 /**
  * @swagger
@@ -102,7 +102,7 @@ router.post('/', authMiddleware, expenseController.create);
  *       200:
  *         description: Trošak uspešno izmenjen
  */
-router.put('/:id', authMiddleware, expenseController.update);
+router.put('/:id', authMiddleware,allowRoles(1, 2, 4),  expenseController.update);
 
 /**
  * @swagger
@@ -122,6 +122,6 @@ router.put('/:id', authMiddleware, expenseController.update);
  *       200:
  *         description: Trošak obrisan
  */
-router.delete('/:id', authMiddleware, expenseController.remove);
+router.delete('/:id', authMiddleware,allowRoles(1, 2, 4),  expenseController.remove);
 
 module.exports = router;

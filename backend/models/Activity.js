@@ -9,6 +9,7 @@ module.exports = (sequelize, DataTypes) => sequelize.define('Activity', {
   plannedDate: { type: DataTypes.DATEONLY, allowNull: false },
   completed: { type: DataTypes.BOOLEAN, defaultValue: false },
   notes: { type: DataTypes.TEXT, allowNull: true },
+  productionId: { type: DataTypes.INTEGER, allowNull: true },
   fieldId: { type: DataTypes.INTEGER, allowNull: true },
   assignedUserId: { type: DataTypes.INTEGER, allowNull: true },
   createdBy: { type: DataTypes.INTEGER, allowNull: false }

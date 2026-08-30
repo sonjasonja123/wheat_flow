@@ -33,7 +33,7 @@ export default function Login() {
     <div className="auth-page">
       <div className="auth-panel">
       <div className="auth-kicker">Dobro došli nazad</div>
-      <h2>Prijava na AgroPanel</h2>
+      <h2>Prijava na Wheat Flow</h2>
       <p className="auth-intro">Pristupite podacima o parcelama, proizvodnji i troškovima.</p>
       <Input label="Email" value={email} onChange={e => setEmail(e.target.value)} />
       <Input

@@ -17,6 +17,11 @@ export const getUserFromToken = () => {
   if (!token) return null;
   try {
     const decoded = jwtDecode(token);
+    if (decoded.exp && decoded.exp * 1000 <= Date.now()) {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      return null;
+    }
     return {
       id: decoded.id,
       roleId: decoded.roleId

@@ -51,7 +51,7 @@ export default function Reports() {
     const url = URL.createObjectURL(new Blob([html], { type: 'application/vnd.ms-excel' }));
     const link = document.createElement('a');
     link.href = url;
-    link.download = `agropanel-izvestaj-${year || 'sve-sezone'}.xls`;
+    link.download = `wheat-flow-izvestaj-${year || 'sve-sezone'}.xls`;
     link.click();
     URL.revokeObjectURL(url);
   };

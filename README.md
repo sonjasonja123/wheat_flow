@@ -1,20 +1,31 @@
-# AgroPanel — upravljanje proizvodnjom pšenice
+# Wheat Flow — upravljanje proizvodnjom pšenice
 
-AgroPanel je full-stack informacioni sistem za parcele, proizvodnju pšenice, troškove, aktivnosti zaposlenih, ugovore, obaveštenja i analitičke izveštaje.
+Wheat Flow je full-stack informacioni sistem za parcele, proizvodnju pšenice, troškove, aktivnosti zaposlenih, obaveštenja i analitičke izveštaje.
 
 ## Glavne mogućnosti
 
 - JWT prijava i autorizacija za administratora, menadžera, agronoma, vlasnika i radnika
 - CRUD parcela, izbor tipa zemljišta i odabir koordinata na Google mapi
 - proizvodnja pšenice: setva, sorta, đubrenje, zaštita, navodnjavanje, žetva, prinos i prodajna cena
+- izbor sorti pšenice Avenue, Simonida, Solindo CS i LG Asterion
 - kontrola redosleda datuma: setva → đubrenje → žetva
 - troškovi povezani sa parcelom i proizvodnjom
-- kalendar aktivnosti, dodela radniku, beleške i automatska obaveštenja
-- evidencija ugovora zaposlenih
+- aktivnosti povezane sa proizvodnjom: izbor faze automatski popunjava naziv, parcelu i datum
+- mesečni kalendar aktivnosti sa navigacijom kroz mesece i označavanjem završenih zadataka
+- dodela aktivnosti zaposlenom, datumirani komentari/beleške i automatska obaveštenja
 - prinos, prihodi, troškovi, profitabilnost i poređenje sezona
 - grafikoni i izvoz izveštaja u Excel/štampu odnosno PDF
-- Google Maps i Open-Meteo integracije
+- Google Maps prikaz i izbor lokacija parcela
+- Open-Meteo vremenski podaci i sugestije za radove prema temperaturi, padavinama, vlažnosti i vetru
 - Swagger, Docker Compose i GitHub Actions
+
+## Tok planiranja aktivnosti
+
+Korisnik bira proizvodnju i jednu od faza za koju je datum unet: setvu, đubrenje, zaštitu ili žetvu. Sistem iz proizvodnje automatski preuzima parcelu, naziv i planirani datum. Korisnik zatim bira zaposlenog i dodaje komentar. Sačuvana aktivnost pojavljuje se u mesečnom kalendaru i listi zadataka, a dodeljeni zaposleni dobija obaveštenje.
+
+## Izveštaji i izvoz
+
+Izveštaji se filtriraju po godini i parceli i prikazuju seme, prinos, troškove, prihod, dobit/gubitak i poređenje sezona. Podaci se mogu izvesti u Excel ili sačuvati kao PDF korišćenjem opcije za štampanje u pregledaču. Komentari aktivnosti čuvaju se u bazi, ali trenutno nisu deo posebnog PDF izvoza.
 
 ## Lokalno pokretanje
 
