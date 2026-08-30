@@ -1,4 +1,5 @@
 const { Contract, User } = require('../models');
+const { sanitizeText } = require('../utils/sanitize');
 
 const include = [
   { model: User, as: 'employee', attributes: ['id', 'name', 'email', 'roleId'] },
@@ -21,7 +22,11 @@ exports.create = async (req, res) => {
     if (req.body.endDate && req.body.endDate < req.body.startDate) {
       return res.status(400).json({ message: 'Datum završetka mora biti posle datuma početka.' });
     }
-    const contract = await Contract.create({ ...req.body, ownerId: req.user.id });
+    const contract = await Contract.create({
+      ...req.body,
+      notes: sanitizeText(req.body.notes),
+      ownerId: req.user.id
+    });
     return res.status(201).json(contract);
   } catch (error) {
     return res.status(400).json({ message: error.message });
@@ -32,7 +37,10 @@ exports.update = async (req, res) => {
   try {
     const contract = await Contract.findByPk(req.params.id);
     if (!contract) return res.status(404).json({ message: 'Ugovor nije pronađen.' });
-    await contract.update(req.body);
+    await contract.update({
+      ...req.body,
+      ...(req.body.notes !== undefined && { notes: sanitizeText(req.body.notes) })
+    });
     return res.json(contract);
   } catch (error) {
     return res.status(400).json({ message: error.message });

@@ -1,4 +1,5 @@
 const { Expense } = require('../models');
+const { sanitizeText } = require('../utils/sanitize');
 
 // GET all expenses
 exports.getAll = async (req, res) => {
@@ -27,8 +28,8 @@ exports.create = async (req, res) => {
     const expense = await Expense.create({
       fieldId: fieldId ?? null,
       productionId: productionId ?? null,
-      type: type ?? null,
-      description: description ?? '',
+      type: sanitizeText(type) ?? null,
+      description: sanitizeText(description) ?? '',
       amount: amount ?? 0,
       date: date ? new Date(date) : null
     });
@@ -51,7 +52,11 @@ exports.update = async (req, res) => {
     const expense = await Expense.findByPk(req.params.id);
     if (!expense) return res.status(404).json({ message: 'Trošak nije pronađen' });
 
-    await expense.update(req.body);
+    await expense.update({
+      ...req.body,
+      ...(req.body.type !== undefined && { type: sanitizeText(req.body.type) }),
+      ...(req.body.description !== undefined && { description: sanitizeText(req.body.description) })
+    });
     res.json(expense);
   } catch (err) {
     console.error(err);

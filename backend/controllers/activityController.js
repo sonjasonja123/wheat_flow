@@ -1,4 +1,5 @@
 const { Activity, Field, Production, User, Notification } = require('../models');
+const { sanitizeText } = require('../utils/sanitize');
 
 const productionDateFields = {
   Setva: 'sowingDate',
@@ -33,7 +34,12 @@ exports.create = async (req, res) => {
     if (![1, 2, 3, 4].includes(req.user.roleId)) {
       return res.status(403).json({ message: 'Radnik ne može da raspoređuje nove aktivnosti.' });
     }
-    const activityData = { ...req.body, createdBy: req.user.id };
+    const activityData = {
+      ...req.body,
+      title: sanitizeText(req.body.title),
+      notes: sanitizeText(req.body.notes),
+      createdBy: req.user.id
+    };
     if (activityData.productionId && activityData.type !== 'Ostalo') {
       const production = await Production.findByPk(activityData.productionId, { include: [{ model: Field, attributes: ['name'] }] });
       if (!production) return res.status(404).json({ message: 'Proizvodnja nije pronađena.' });
@@ -68,9 +74,14 @@ exports.update = async (req, res) => {
     if (req.user.roleId === 5 && !workerOwnTask) {
       return res.status(403).json({ message: 'Možete menjati samo svoje aktivnosti.' });
     }
+    const sanitizedBody = {
+      ...req.body,
+      ...(req.body.title !== undefined && { title: sanitizeText(req.body.title) }),
+      ...(req.body.notes !== undefined && { notes: sanitizeText(req.body.notes) })
+    };
     const allowedBody = req.user.roleId === 5
-      ? { completed: req.body.completed, notes: req.body.notes }
-      : req.body;
+      ? { completed: req.body.completed, notes: sanitizedBody.notes }
+      : sanitizedBody;
     await activity.update(allowedBody);
     return res.json(activity);
   } catch (error) {

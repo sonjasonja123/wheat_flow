@@ -8,8 +8,18 @@ exports.register = async (req, res) => {
     if (!name || !email || !password || !roleId) {
       return res.status(400).json({ message: 'Sva polja su obavezna.' });
     }
+    const creatorRole = Number(req.user.roleId);
+    const requestedRole = Number(roleId);
+    if (creatorRole === 4 && requestedRole === 1) {
+      return res.status(403).json({ message: 'Vlasnik ne može da doda administratora.' });
+    }
+    if (creatorRole === 4 && ![2, 3, 5].includes(requestedRole)) {
+      return res.status(403).json({ message: 'Vlasnik može da doda menadžera, agronoma ili radnika.' });
+    }
+    const existingUser = await User.findOne({ where: { email } });
+    if (existingUser) return res.status(400).json({ message: 'Email već postoji.' });
     const hashedPassword = await bcrypt.hash(password, 10);
-    const user = await User.create({ name, email, password: hashedPassword, roleId });
+    const user = await User.create({ name, email, password: hashedPassword, roleId: requestedRole });
     return res.status(201).json({
       message: 'Korisnik je kreiran.',
       user: { id: user.id, name: user.name, email: user.email, roleId: user.roleId }
@@ -18,6 +28,8 @@ exports.register = async (req, res) => {
     return res.status(400).json({ message: error.message });
   }
 };
+
+exports.logout = (req, res) => res.json({ message: 'Uspešno ste se odjavili.' });
 
 exports.login = async (req, res) => {
   try {

@@ -35,11 +35,12 @@ Preduslovi su Node.js 18+, MySQL 8 i dve terminalske sesije.
 1. Napravite bazu `agriculture_db`.
 2. Kopirajte `backend/.env.example` u `backend/.env` i unesite svoje vrednosti.
 3. Kopirajte `frontend/.env.example` u `frontend/.env` i unesite Google Maps ključ.
-4. Pokrenite backend:
+4. Za novu bazu primenite migracije, pa pokrenite backend:
 
 ```powershell
 cd backend
 npm install
+npm run db:migrate
 npm start
 ```
 
@@ -52,6 +53,26 @@ npm start
 ```
 
 Aplikacija je na http://localhost:3000, API na http://localhost:5000, a Swagger na http://localhost:5000/api-docs.
+
+Autentifikacija koristi jedinstvene REST rute:
+
+- `POST /api/auth/login`
+- `POST /api/auth/register`
+- `POST /api/auth/logout`
+- `GET /api/users` i `GET /api/users/me` za korisničke podatke
+
+## Migracije baze
+
+Za produkcionu šemu koriste se Sequelize migracije:
+
+```powershell
+cd backend
+npm run db:migrate
+```
+
+Dodate su posebne migracije za `activities` i `notifications`, uključujući spoljne ključeve ka proizvodnjama, parcelama i korisnicima. Migracija `20260830090200-limit-user-name-length.js` koristi `changeColumn`, pa projekat ima najmanje tri tipa migracionih operacija: `createTable`, `addColumn` i `changeColumn`.
+
+`sequelize.sync({ alter: true })` nije podrazumevano uključen. Za lokalni razvoj može se eksplicitno dozvoliti postavljanjem `DB_SCHEMA_ALTER=true`; u produkciji se koriste migracije i samo povezivanje sa postojećom šemom.
 
 Za testne podatke prvo jednom pokrenite backend da Sequelize napravi tabele, zatim izvršite `backend/seed-test-data.sql`. Svi testni nalozi koriste lozinku `Test123!`; email adrese su navedene na kraju SQL skripte.
 
@@ -77,4 +98,10 @@ Opcioni k6 test u `scripts/load-test.js` postepeno simulira do 500 korisnika. Po
 
 ## Bezbednost i produkcija
 
-Lozinke se čuvaju kao bcrypt hash, API koristi JWT, provera uloga postoji i na serveru, ograničena je učestalost pokušaja prijave, a Helmet postavlja sigurnosna HTTP zaglavlja. Tajne i lokalne `.env` datoteke se ne čuvaju u Gitu. HTTPS i automatizovan dnevni raspored rezervnih kopija podešavaju se na izabranoj cloud platformi.
+Lozinke se čuvaju kao bcrypt hash, API koristi JWT, provera uloga postoji i na serveru, ograničena je učestalost pokušaja prijave, a Helmet postavlja sigurnosna HTTP zaglavlja. Paket `xss` sanitizuje komentare aktivnosti, opise troškova i napomene ugovora pre čuvanja. Tajne i lokalne `.env` datoteke se ne čuvaju u Gitu. HTTPS i automatizovan dnevni raspored rezervnih kopija podešavaju se na izabranoj cloud platformi.
+
+GitHub Actions pokreće testove i Docker build za `main`, `develop` i `feature/**` push grane, kao i za pull request zahteve ka `main` i `develop`.
+
+## Cloud status
+
+Produkcijski cloud URL još nije konfigurisan. Za stvarno postavljanje potrebno je obezbediti cloud MySQL instancu, backend servis, frontend servis i produkcione promenljive `DB_*`, `JWT_SECRET`, `FRONTEND_URL` i `REACT_APP_API_URL`. README ne navodi lažni deployment URL dok servis stvarno ne bude objavljen i proveren.

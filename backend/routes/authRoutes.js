@@ -23,16 +23,21 @@ const allowRoles = require('../middleware/role');
  *         application/json:
  *           schema:
  *             type: object
- *             required:
- *               - username
- *               - password
+ *             required: [name, email, password, roleId]
  *             properties:
- *               username:
+ *               name:
  *                 type: string
- *                 example: marko
+ *                 example: Marko Marković
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 example: marko@example.com
  *               password:
  *                 type: string
- *                 example: sifra123
+ *                 example: SigurnaSifra123!
+ *               roleId:
+ *                 type: integer
+ *                 example: 5
  *     responses:
  *       200:
  *         description: Korisnik uspešno registrovan
@@ -52,16 +57,15 @@ const allowRoles = require('../middleware/role');
  *         application/json:
  *           schema:
  *             type: object
- *             required:
- *               - username
- *               - password
+ *             required: [email, password]
  *             properties:
- *               username:
+ *               email:
  *                 type: string
- *                 example: marko
+ *                 format: email
+ *                 example: marko@example.com
  *               password:
  *                 type: string
- *                 example: sifra123
+ *                 example: SigurnaSifra123!
  *     responses:
  *       200:
  *         description: Uspesna prijava sa JWT tokenom
@@ -77,7 +81,23 @@ const allowRoles = require('../middleware/role');
  *         description: Pogrešni kredencijali
  */
 
+/**
+ * @swagger
+ * /api/auth/logout:
+ *   post:
+ *     summary: Odjava prijavljenog korisnika
+ *     tags: [Auth]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Token se uklanja na klijentu i odjava je potvrđena
+ *       401:
+ *         description: Neautorizovan zahtev
+ */
+
 router.post('/register', auth, allowRoles(1, 4), authController.register);
 router.post('/login', authController.login);
+router.post('/logout', auth, authController.logout);
 
 module.exports = router;

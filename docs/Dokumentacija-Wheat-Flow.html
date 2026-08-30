@@ -172,7 +172,7 @@ ul, ol { margin-top: 4pt; }
 
 <h1>6. API i bezbednost</h1>
 <h2>6.1. REST API</h2>
-<p>API je organizovan po resursima: /api/users, /api/fields, /api/productions, /api/expenses, /api/activities, /api/contracts, /api/notifications i /api/reports. Swagger interfejs je dostupan na /api-docs.</p>
+<p>API je organizovan po resursima: /api/auth, /api/users, /api/fields, /api/productions, /api/expenses, /api/activities, /api/contracts, /api/notifications i /api/reports. Autentifikacija koristi jedinstvene rute POST /api/auth/login, POST /api/auth/register i POST /api/auth/logout; duplirane auth rute pod /api/users su uklonjene. Swagger interfejs je dostupan na /api-docs i obuhvata i Crops i Reports operacije.</p>
 <div class="placeholder">SLIKA ZA NAKNADNO DODAVANJE 13<br>Swagger UI sa prikazom ruta</div>
 
 <h2>6.2. Bezbednosne mere</h2>
@@ -181,6 +181,7 @@ ul, ol { margin-top: 4pt; }
 <li>JWT sadrži identifikator korisnika i ulogu, traje jedan dan i šalje se u Authorization zaglavlju.</li>
 <li>Backend proverava ulogu pre osetljivih akcija; sakrivanje menija nije jedina zaštita.</li>
 <li>Helmet postavlja bezbednosna zaglavlja, JSON telo je ograničeno, a prijava ima rate limit.</li>
+<li>Paket xss uklanja izvršivi HTML iz komentara aktivnosti, opisa troškova i napomena ugovora pre čuvanja u bazi.</li>
 <li>JWT tajna, podaci baze i Google Maps ključ nalaze se u lokalnim .env datotekama ignorisanim u Gitu.</li>
 <li>HTTPS se uključuje na reverse proxy ili cloud platformi u produkciji.</li>
 </ul>
@@ -191,12 +192,16 @@ ul, ol { margin-top: 4pt; }
 <p class="code">docker compose up --build</p>
 
 <h2>7.2. CI/CD</h2>
-<p>GitHub Actions se aktivira za granu main i pull request. Pipeline instalira zavisnosti sa npm ci, pokreće backend testove, gradi produkcioni frontend i proverava izgradnju obe Docker slike. Namerno ne objavljuje slike na tuđi Docker Hub nalog; objava se može dodati kada vlasnik repozitorijuma definiše svoje secrets vrednosti.</p>
+<p>GitHub Actions se aktivira za push na main, develop i feature/** grane, kao i za pull request ka main i develop granama. Pipeline instalira zavisnosti sa npm ci, pokreće backend testove, gradi produkcioni frontend i proverava izgradnju obe Docker slike. Namerno ne objavljuje slike na tuđi Docker Hub nalog; objava se može dodati kada vlasnik repozitorijuma definiše svoje secrets vrednosti.</p>
 <div class="placeholder">SLIKA ZA NAKNADNO DODAVANJE 14<br>Uspešan GitHub Actions pipeline</div>
 
 <h2>7.3. Backup, dostupnost i cloud</h2>
 <p>Skripta scripts/backup-db.ps1 koristi mysqldump i pravi vremenski označenu rezervnu kopiju. U produkciji se zakazuje najmanje jednom dnevno i kopija se čuva van servera. Endpoint /api/health proverava i API i vezu sa bazom, pa ga cloud monitoring može koristiti za upozorenja i restart.</p>
 <p>Aplikacija se može postaviti na AWS, Azure, Google Cloud, Render ili sličnu platformu koja podržava kontejnere. Za produkciju treba podesiti upravljanu MySQL bazu, jaku JWT tajnu, HTTPS domen, politiku CORS-a, backup raspored i monitoring dostupnosti.</p>
+<p>Cloud deployment još nije izvršen i produkcijski URL ne postoji. Za objavu su potrebni cloud nalog, MySQL servis i produkcione environment vrednosti; dokumentacija zato ne navodi neproveren URL.</p>
+
+<h2>7.4. Migracije baze</h2>
+<p>Sequelize migracije kreiraju activities i notifications tabele sa stranim ključevima ka korisnicima, parcelama i proizvodnjama. Posebna changeColumn migracija ograničava dužinu imena korisnika na 120 znakova. Projekat time koristi createTable, addColumn i changeColumn tipove migracija. U produkciji se pokreće npm run db:migrate, dok sequelize.sync({ alter: true }) nije podrazumevano aktivan.</p>
 
 <h1>8. Testiranje i vizuelizacija</h1>
 <h2>8.1. Automatizovani testovi</h2>
