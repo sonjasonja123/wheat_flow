@@ -32,7 +32,7 @@ export default function Login() {
   return (
     <div className="auth-page">
       <div className="auth-panel">
-      <div className="auth-kicker">Dobro došli nazad</div>
+      <div className="auth-kicker inline-flex rounded-full bg-lime-100 px-3 py-1">Dobro došli nazad</div>
       <h2>Prijava na Wheat Flow</h2>
       <p className="auth-intro">Pristupite podacima o parcelama, proizvodnji i troškovima.</p>
       <Input label="Email" value={email} onChange={e => setEmail(e.target.value)} />
